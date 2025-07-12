@@ -3,4 +3,4 @@ topic :skill swap
 Team leader name : Ruhaan pathan
 member 1 : Rudra Miyani
 Member 2 : rajdeepsinh jadeja
-we used and inline  css for Faster Prototyping.
+We used inline CSS for faster prototyping.
