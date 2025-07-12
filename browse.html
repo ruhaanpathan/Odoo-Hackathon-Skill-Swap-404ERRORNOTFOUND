@@ -1,0 +1,1243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SkillSwap - Browse Skills</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .navbar {
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .navbar-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+        }
+
+        .logo {
+            color: white;
+            font-size: 1.5rem;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: #667eea;
+        }
+
+        .main-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .page-title {
+            color: white;
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .page-subtitle {
+            color: rgba(255,255,255,0.9);
+            font-size: 1.2rem;
+        }
+
+        .search-filters {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+
+        .search-bar {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 1rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 25px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .search-btn {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 25px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .search-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .filter-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .filter-group label {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .filter-group select {
+            padding: 0.8rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1rem;
+        }
+
+        .filter-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .filter-tag {
+            background: #667eea;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .filter-tag:hover {
+            background: #764ba2;
+            transform: translateY(-2px);
+        }
+
+        .filter-tag.active {
+            background: #ff6b6b;
+        }
+
+        .results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .results-count {
+            color: white;
+            font-size: 1.1rem;
+        }
+
+        .sort-dropdown {
+            padding: 0.8rem;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 10px;
+            background: rgba(255,255,255,0.1);
+            color: white;
+            font-size: 1rem;
+        }
+
+        .sort-dropdown option {
+            background: #333;
+            color: white;
+        }
+
+        .users-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .user-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .user-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 30px 60px rgba(0,0,0,0.2);
+        }
+
+        .user-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+        }
+
+        .user-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .user-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .user-info h3 {
+            color: #333;
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .user-location {
+            color: #666;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .user-bio {
+            color: #666;
+            font-size: 0.95rem;
+            line-height: 1.4;
+            margin-bottom: 1.5rem;
+        }
+
+        .skills-section {
+            margin-bottom: 1.5rem;
+        }
+
+        .skills-title {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 0.8rem;
+            color: #333;
+        }
+
+        .skills-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .skill-tag {
+            background: #667eea;
+            color: white;
+            padding: 0.4rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+        }
+
+        .skill-tag.wanted {
+            background: #ff6b6b;
+        }
+
+        .user-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .action-btn {
+            flex: 1;
+            padding: 0.8rem 1rem;
+            border: none;
+            border-radius: 25px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .view-btn {
+            background: #48dbfb;
+            color: white;
+        }
+
+        .view-btn:hover {
+            background: #0abde3;
+            transform: translateY(-2px);
+        }
+
+        .swap-btn {
+            background: linear-gradient(45deg, #ff6b6b, #feca57);
+            color: white;
+        }
+
+        .swap-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .rating {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .stars {
+            color: #feca57;
+        }
+
+        .rating-text {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .availability-indicator {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #2ed573;
+        }
+
+        .availability-indicator.offline {
+            background: #ff4757;
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 4rem 2rem;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            margin-top: 2rem;
+        }
+
+        .no-results h3 {
+            color: #333;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .no-results p {
+            color: #666;
+            font-size: 1rem;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 1000;
+        }
+
+        .modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 2rem;
+            border-radius: 20px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-title {
+            color: #333;
+            font-size: 1.5rem;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #666;
+        }
+
+        .swap-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .swap-form label {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .swap-form select,
+        .swap-form textarea {
+            padding: 0.8rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1rem;
+        }
+
+        .swap-form textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .submit-swap-btn {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 25px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .submit-swap-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .message {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 1rem 2rem;
+            border-radius: 10px;
+            color: white;
+            font-weight: 600;
+            z-index: 1001;
+            transform: translateX(100%);
+            transition: transform 0.3s;
+        }
+
+        .message.show {
+            transform: translateX(0);
+        }
+
+        .message.success {
+            background: #2ed573;
+        }
+
+        .message.error {
+            background: #ff4757;
+        }
+
+        .message.info {
+            background: #48dbfb;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .page-btn {
+            padding: 0.8rem 1rem;
+            border: none;
+            border-radius: 10px;
+            background: rgba(255,255,255,0.9);
+            color: #333;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .page-btn:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .page-btn.active {
+            background: #667eea;
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            .users-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .filter-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .search-bar {
+                flex-direction: column;
+            }
+            
+            .results-header {
+                flex-direction: column;
+                gap: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-content">
+            <a href="#" class="logo">🔄 SkillSwap</a>
+            <div class="nav-links">
+                <a href="index.html" onclick="showMessage('Navigating to Home', 'info')">Home</a>
+                <a href="#" onclick="showMessage('Navigating to Profile', 'info')">Profile</a>
+                <a href="swaps.html" onclick="showMessage('Navigating to My Swaps', 'info')">My Swaps</a>
+                <a href="#" onclick="logout()">Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="main-container">
+        <div class="page-header">
+            <h1 class="page-title">🔍 Browse Skills</h1>
+            <p class="page-subtitle">Discover amazing people and the skills they offer</p>
+        </div>
+
+        <div class="search-filters">
+            <div class="search-bar">
+                <input type="text" class="search-input" id="searchInput" placeholder="Search for skills, people, or keywords...">
+                <button class="search-btn" onclick="searchUsers()">🔍 Search</button>
+            </div>
+
+            <div class="filter-row">
+                <div class="filter-group">
+                    <label>Category</label>
+                    <select id="categoryFilter" onchange="filterUsers()">
+                        <option value="">All Categories</option>
+                        <option value="programming">Programming</option>
+                        <option value="design">Design</option>
+                        <option value="languages">Languages</option>
+                        <option value="music">Music</option>
+                        <option value="business">Business</option>
+                        <option value="cooking">Cooking</option>
+                        <option value="fitness">Fitness</option>
+                        <option value="art">Art</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label>Location</label>
+                    <select id="locationFilter" onchange="filterUsers()">
+                        <option value="">All Locations</option>
+                        <option value="remote">Remote Only</option>
+                        <option value="local">Local Only</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label>Availability</label>
+                    <select id="availabilityFilter" onchange="filterUsers()">
+                        <option value="">Any Time</option>
+                        <option value="weekdays">Weekdays</option>
+                        <option value="weekends">Weekends</option>
+                        <option value="mornings">Mornings</option>
+                        <option value="evenings">Evenings</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="filter-tags">
+                <div class="filter-tag" onclick="toggleTag(this)" data-tag="javascript">JavaScript</div>
+                <div class="filter-tag" onclick="toggleTag(this)" data-tag="python">Python</div>
+                <div class="filter-tag" onclick="toggleTag(this)" data-tag="design">Design</div>
+                <div class="filter-tag" onclick="toggleTag(this)" data-tag="photography">Photography</div>
+                <div class="filter-tag" onclick="toggleTag(this)" data-tag="marketing">Marketing</div>
+                <div class="filter-tag" onclick="toggleTag(this)" data-tag="writing">Writing</div>
+                <div class="filter-tag" onclick="toggleTag(this)" data-tag="spanish">Spanish</div>
+                <div class="filter-tag" onclick="toggleTag(this)" data-tag="guitar">Guitar</div>
+            </div>
+        </div>
+
+        <div class="results-header">
+            <div class="results-count" id="resultsCount">Showing 12 users</div>
+            <select class="sort-dropdown" id="sortBy" onchange="sortUsers()">
+                <option value="newest">Newest Members</option>
+                <option value="rating">Highest Rated</option>
+                <option value="active">Most Active</option>
+                <option value="name">Name A-Z</option>
+            </select>
+        </div>
+
+        <div class="users-grid" id="usersGrid">
+            <!-- Users will be populated here -->
+        </div>
+
+        <div class="no-results" id="noResults" style="display: none;">
+            <h3>No users found</h3>
+            <p>Try adjusting your search filters or explore different skills.</p>
+        </div>
+
+        <div class="pagination" id="pagination" style="display: none;">
+            <button class="page-btn" onclick="changePage(-1)">Previous</button>
+            <button class="page-btn active" onclick="changePage(1)">1</button>
+            <button class="page-btn" onclick="changePage(2)">2</button>
+            <button class="page-btn" onclick="changePage(3)">3</button>
+            <button class="page-btn" onclick="changePage(1)">Next</button>
+        </div>
+    </div>
+
+    <!-- Swap Request Modal -->
+    <div class="modal" id="swapModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Request Skill Swap</h3>
+                <button class="close-btn" onclick="closeModal()">&times;</button>
+            </div>
+            <form class="swap-form" onsubmit="submitSwapRequest(event)">
+                <label>What skill would you like to learn?</label>
+                <select id="requestedSkill" required>
+                    <option value="">Select a skill</option>
+                </select>
+
+                <label>What skill will you offer in return?</label>
+                <select id="offeredSkill" required>
+                    <option value="">Select your skill</option>
+                </select>
+
+                <label>Message (Optional)</label>
+                <textarea id="swapMessage" placeholder="Tell them why you'd like to learn this skill..."></textarea>
+
+                <button type="submit" class="submit-swap-btn">Send Swap Request</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Sample user data - in a real app, this would come from a database
+        const sampleUsers = [
+            {
+                id: 1,
+                name: "Alex Johnson",
+                location: "New York, NY",
+                bio: "Full-stack developer with 5 years experience. Love teaching and learning new technologies.",
+                avatar: "A",
+                offeredSkills: ["JavaScript", "React", "Node.js", "Python"],
+                wantedSkills: ["UI/UX Design", "Photography", "Spanish"],
+                rating: 4.8,
+                reviewCount: 23,
+                availability: ["weekday_evening", "weekend_morning"],
+                category: "programming",
+                joinDate: "2024-01-15",
+                isOnline: true
+            },
+            {
+                id: 2,
+                name: "Sarah Chen",
+                location: "San Francisco, CA",
+                bio: "Graphic designer passionate about creating beautiful, user-friendly designs.",
+                avatar: "S",
+                offeredSkills: ["Photoshop", "Illustrator", "UI/UX Design", "Branding"],
+                wantedSkills: ["Web Development", "Marketing", "Content Writing"],
+                rating: 4.9,
+                reviewCount: 31,
+                availability: ["weekday_afternoon", "weekend_evening"],
+                category: "design",
+                joinDate: "2024-02-10",
+                isOnline: false
+            },
+            {
+                id: 3,
+                name: "Miguel Rodriguez",
+                location: "Remote",
+                bio: "Native Spanish speaker and language teacher. Also skilled in digital marketing.",
+                avatar: "M",
+                offeredSkills: ["Spanish", "Marketing", "SEO", "Content Strategy"],
+                wantedSkills: ["Video Editing", "JavaScript", "Guitar"],
+                rating: 4.7,
+                reviewCount: 18,
+                availability: ["weekday_morning", "weekend_afternoon"],
+                category: "languages",
+                joinDate: "2024-03-05",
+                isOnline: true
+            },
+            {
+                id: 4,
+                name: "Emma Wilson",
+                location: "London, UK",
+                bio: "Professional photographer and visual storyteller. Love capturing moments and teaching others.",
+                avatar: "E",
+                offeredSkills: ["Photography", "Lightroom", "Photo Editing", "Visual Storytelling"],
+                wantedSkills: ["Web Design", "Social Media Marketing", "French"],
+                rating: 4.6,
+                reviewCount: 27,
+                availability: ["weekend_morning", "weekend_evening"],
+                category: "art",
+                joinDate: "2024-01-20",
+                isOnline: true
+            },
+            {
+                id: 5,
+                name: "David Kim",
+                location: "Seoul, South Korea",
+                bio: "Software engineer and music enthusiast. I play guitar and love sharing my passion for music.",
+                avatar: "D",
+                offeredSkills: ["Python", "Machine Learning", "Guitar", "Music Theory"],
+                wantedSkills: ["Japanese", "Photography", "Cooking"],
+                rating: 4.5,
+                reviewCount: 15,
+                availability: ["weekday_evening", "weekend_morning"],
+                category: "programming",
+                joinDate: "2024-02-28",
+                isOnline: false
+            },
+            {
+                id: 6,
+                name: "Lisa Anderson",
+                location: "Toronto, Canada",
+                bio: "Business consultant and fitness enthusiast. I help people achieve their professional and personal goals.",
+                avatar: "L",
+                offeredSkills: ["Business Strategy", "Fitness Training", "Public Speaking", "Leadership"],
+                wantedSkills: ["Data Analysis", "Graphic Design", "Yoga"],
+                rating: 4.8,
+                reviewCount: 22,
+                availability: ["weekday_morning", "weekend_afternoon"],
+                category: "business",
+                joinDate: "2024-01-10",
+                isOnline: true
+            },
+            {
+                id: 7,
+                name: "Carlos Martinez",
+                location: "Mexico City, Mexico",
+                bio: "Professional chef and cooking instructor. I specialize in Mexican and Italian cuisine.",
+                avatar: "C",
+                offeredSkills: ["Cooking", "Baking", "Recipe Development", "Food Photography"],
+                wantedSkills: ["Business Management", "Photography", "English"],
+                rating: 4.7,
+                reviewCount: 19,
+                availability: ["weekday_evening", "weekend_morning"],
+                category: "cooking",
+                joinDate: "2024-03-12",
+                isOnline: true
+            },
+            {
+                id: 8,
+                name: "Anna Petrov",
+                location: "Remote",
+                bio: "Digital marketer and content creator. I help businesses grow their online presence.",
+                avatar: "A",
+                offeredSkills: ["Digital Marketing", "Content Creation", "Social Media", "Analytics"],
+                wantedSkills: ["Graphic Design", "Video Editing", "German"],
+                rating: 4.6,
+                reviewCount: 25,
+                availability: ["weekday_afternoon", "weekend_evening"],
+                category: "business",
+                joinDate: "2024-02-22",
+                isOnline: false
+            },
+            {
+                id: 9,
+                name: "James Wright",
+                location: "Austin, TX",
+                bio: "Fitness trainer and yoga instructor. Passionate about helping others achieve their wellness goals.",
+                avatar: "J",
+                offeredSkills: ["Fitness Training", "Yoga", "Nutrition", "Mindfulness"],
+                wantedSkills: ["Photography", "Web Development", "Music Production"],
+                rating: 4.8,
+                reviewCount: 33,
+                availability: ["weekday_morning", "weekend_afternoon"],
+                category: "fitness",
+                joinDate: "2024-01-30",
+                isOnline: true
+            },
+            {
+                id: 10,
+                name: "Sophie Laurent",
+                location: "Paris, France",
+                bio: "French tutor and cultural consultant. I help people learn French and understand French culture.",
+                avatar: "S",
+                offeredSkills: ["French", "Translation", "Cultural Consulting", "Writing"],
+                wantedSkills: ["Digital Marketing", "Photography", "Cooking"],
+                rating: 4.9,
+                reviewCount: 41,
+                availability: ["weekday_evening", "weekend_morning"],
+                category: "languages",
+                joinDate: "2024-01-08",
+                isOnline: true
+            },
+            {
+                id: 11,
+                name: "Ryan Thompson",
+                location: "Vancouver, Canada",
+                bio: "Music producer and audio engineer. I create beats and help artists record their music.",
+                avatar: "R",
+                offeredSkills: ["Music Production", "Audio Engineering", "Beat Making", "Sound Design"],
+                wantedSkills: ["Video Editing", "Web Development", "Business Strategy"],
+                rating: 4.7,
+                reviewCount: 16,
+                availability: ["weekday_evening", "weekend_afternoon"],
+                category: "music",
+                joinDate: "2024-03-18",
+                isOnline: false
+            },
+            {
+                id: 12,
+                name: "Maya Patel",
+                location: "Mumbai, India",
+                bio: "Data scientist and AI researcher. I love working with data and teaching others about machine learning.",
+                avatar: "M",
+                offeredSkills: ["Data Science", "Machine Learning", "Python", "Statistics"],
+                wantedSkills: ["UI/UX Design", "Digital Marketing", "Hindi"],
+                rating: 4.8,
+                reviewCount: 28,
+                availability: ["weekday_morning", "weekend_evening"],
+                category: "programming",
+                joinDate: "2024-02-14",
+                isOnline: true
+            }
+        ];
+
+        let currentUsers = [...sampleUsers];
+        let filteredUsers = [...sampleUsers];
+        let currentUser = null;
+        let userSkills = [];
+        let currentPage = 1;
+        let usersPerPage = 6;
+
+        // Initialize page
+        window.addEventListener('load', function() {
+            loadUserProfile();
+            displayUsers(getCurrentPageUsers());
+            updateResultsCount();
+            initializeSearch();
+        });
+
+        function loadUserProfile() {
+            // Load user profile from localStorage or set defaults
+            const profile = {
+                name: 'Current User',
+                offeredSkills: ['JavaScript', 'React', 'Photography', 'Spanish']
+            };
+            
+            userSkills = profile.offeredSkills;
+            currentUser = profile.name;
+        }
+
+        function initializeSearch() {
+            const searchInput = document.getElementById('searchInput');
+            searchInput.addEventListener('input', debounce(searchUsers, 300));
+        }
+
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+
+        function displayUsers(users) {
+            const grid = document.getElementById('usersGrid');
+            const noResults = document.getElementById('noResults');
+            
+            if (users.length === 0) {
+                grid.style.display = 'none';
+                noResults.style.display = 'block';
+                return;
+            }
+            
+            grid.style.display = 'grid';
+            noResults.style.display = 'none';
+            
+            grid.innerHTML = users.map(user => createUserCard(user)).join('');
+        }
+
+        function createUserCard(user) {
+            const starsHtml = generateStars(user.rating);
+            return `
+                <div class="user-card">
+                    <div class="availability-indicator ${user.isOnline ? '' : 'offline'}"></div>
+                    <div class="user-header">
+                        <div class="user-avatar">${user.avatar}</div>
+                        <div class="user-info">
+                            <h3>${user.name}</h3>
+                            <div class="user-location">📍 ${user.location}</div>
+                        </div>
+                    </div>
+                    <div class="user-bio">${user.bio}</div>
+                    <div class="skills-section">
+                        <div class="skills-title">💪 Offers:</div>
+                        <div class="skills-list">
+                            ${user.offeredSkills.map(skill => `<span class="skill-tag">${skill}</span>`).join('')}
+                        </div>
+                    </div>
+                    <div class="skills-section">
+                        <div class="skills-title">🎯 Wants to learn:</div>
+                        <div class="skills-list">
+                            ${user.wantedSkills.map(skill => `<span class="skill-tag wanted">${skill}</span>`).join('')}
+                        </div>
+                    </div>
+                    <div class="rating">
+                        <div class="stars">${starsHtml}</div>
+                        <span class="rating-text">(${user.reviewCount} reviews)</span>
+                    </div>
+                    <div class="user-actions">
+                        <button class="action-btn view-btn" onclick="viewProfile(${user.id})">👁️ View Profile</button>
+                        <button class="action-btn swap-btn" onclick="requestSwap(${user.id})">🔄 Request Swap</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function generateStars(rating) {
+            const fullStars = Math.floor(rating);
+            const hasHalfStar = rating % 1 !== 0;
+            let stars = '';
+            
+            for (let i = 0; i < fullStars; i++) {
+                stars += '⭐';
+            }
+            
+            if (hasHalfStar) {
+                stars += '⭐'; // Using full star for simplicity
+            }
+            
+            return stars;
+        }
+
+        function searchUsers() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            
+            if (searchTerm === '') {
+                filteredUsers = [...sampleUsers];
+            } else {
+                filteredUsers = sampleUsers.filter(user => {
+                    return user.name.toLowerCase().includes(searchTerm) ||
+                           user.bio.toLowerCase().includes(searchTerm) ||
+                           user.offeredSkills.some(skill => skill.toLowerCase().includes(searchTerm)) ||
+                           user.wantedSkills.some(skill => skill.toLowerCase().includes(searchTerm)) ||
+                           user.location.toLowerCase().includes(searchTerm);
+                });
+            }
+            
+            applyFilters();
+        }
+
+        function filterUsers() {
+            const category = document.getElementById('categoryFilter').value;
+            const location = document.getElementById('locationFilter').value;
+            const availability = document.getElementById('availabilityFilter').value;
+            
+            let filtered = [...filteredUsers];
+            
+            if (category) {
+                filtered = filtered.filter(user => user.category === category);
+            }
+            
+            if (location === 'remote') {
+                filtered = filtered.filter(user => user.location.toLowerCase().includes('remote'));
+            } else if (location === 'local') {
+                filtered = filtered.filter(user => !user.location.toLowerCase().includes('remote'));
+            }
+            
+            if (availability) {
+                filtered = filtered.filter(user => {
+                    return user.availability.some(avail => avail.includes(availability.replace('s', '')));
+                });
+            }
+            
+            currentUsers = filtered;
+            currentPage = 1;
+            displayUsers(getCurrentPageUsers());
+            updateResultsCount();
+            updatePagination();
+        }
+
+        function applyFilters() {
+            const activeTags = Array.from(document.querySelectorAll('.filter-tag.active'))
+                .map(tag => tag.dataset.tag.toLowerCase());
+            
+            let filtered = [...filteredUsers];
+            
+            if (activeTags.length > 0) {
+                filtered = filtered.filter(user => {
+                    return activeTags.some(tag => 
+                        user.offeredSkills.some(skill => skill.toLowerCase().includes(tag)) ||
+                        user.wantedSkills.some(skill => skill.toLowerCase().includes(tag))
+                    );
+                });
+            }
+            
+            currentUsers = filtered;
+            filterUsers();
+        }
+
+        function toggleTag(tagElement) {
+            tagElement.classList.toggle('active');
+            applyFilters();
+        }
+
+        function sortUsers() {
+            const sortBy = document.getElementById('sortBy').value;
+            
+            switch (sortBy) {
+                case 'rating':
+                    currentUsers.sort((a, b) => b.rating - a.rating);
+                    break;
+                case 'active':
+                    currentUsers.sort((a, b) => b.reviewCount - a.reviewCount);
+                    break;
+                case 'name':
+                    currentUsers.sort((a, b) => a.name.localeCompare(b.name));
+                    break;
+                case 'newest':
+                default:
+                    currentUsers.sort((a, b) => new Date(b.joinDate) - new Date(a.joinDate));
+                    break;
+            }
+            
+            displayUsers(getCurrentPageUsers());
+        }
+
+        function getCurrentPageUsers() {
+            const startIndex = (currentPage - 1) * usersPerPage;
+            const endIndex = startIndex + usersPerPage;
+            return currentUsers.slice(startIndex, endIndex);
+        }
+
+        function updateResultsCount() {
+            const count = currentUsers.length;
+            document.getElementById('resultsCount').textContent = 
+                `Showing ${count} user${count !== 1 ? 's' : ''}`;
+        }
+
+        function updatePagination() {
+            const pagination = document.getElementById('pagination');
+            const totalPages = Math.ceil(currentUsers.length / usersPerPage);
+            
+            if (totalPages <= 1) {
+                pagination.style.display = 'none';
+                return;
+            }
+            
+            pagination.style.display = 'flex';
+            pagination.innerHTML = '';
+            
+            // Previous button
+            if (currentPage > 1) {
+                const prevBtn = document.createElement('button');
+                prevBtn.className = 'page-btn';
+                prevBtn.textContent = 'Previous';
+                prevBtn.onclick = () => changePage(currentPage - 1);
+                pagination.appendChild(prevBtn);
+            }
+            
+            // Page numbers
+            for (let i = 1; i <= Math.min(totalPages, 5); i++) {
+                const pageBtn = document.createElement('button');
+                pageBtn.className = `page-btn ${i === currentPage ? 'active' : ''}`;
+                pageBtn.textContent = i;
+                pageBtn.onclick = () => changePage(i);
+                pagination.appendChild(pageBtn);
+            }
+            
+            // Next button
+            if (currentPage < totalPages) {
+                const nextBtn = document.createElement('button');
+                nextBtn.className = 'page-btn';
+                nextBtn.textContent = 'Next';
+                nextBtn.onclick = () => changePage(currentPage + 1);
+                pagination.appendChild(nextBtn);
+            }
+        }
+
+        function changePage(page) {
+            const totalPages = Math.ceil(currentUsers.length / usersPerPage);
+            if (page >= 1 && page <= totalPages) {
+                currentPage = page;
+                displayUsers(getCurrentPageUsers());
+                updatePagination();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }
+
+        function viewProfile(userId) {
+            const user = sampleUsers.find(u => u.id === userId);
+            if (user) {
+                showMessage(`Viewing profile for ${user.name}`, 'info');
+                // In a real app, this would navigate to the user's profile page
+            }
+        }
+
+        function requestSwap(userId) {
+            const user = sampleUsers.find(u => u.id === userId);
+            if (user) {
+                openSwapModal(user);
+            }
+        }
+
+        function openSwapModal(user) {
+            const modal = document.getElementById('swapModal');
+            const requestedSkillSelect = document.getElementById('requestedSkill');
+            const offeredSkillSelect = document.getElementById('offeredSkill');
+            
+            // Populate requested skills (what the user offers)
+            requestedSkillSelect.innerHTML = '<option value="">Select a skill</option>';
+            user.offeredSkills.forEach(skill => {
+                const option = document.createElement('option');
+                option.value = skill;
+                option.textContent = skill;
+                requestedSkillSelect.appendChild(option);
+            });
+            
+            // Populate offered skills (what current user can offer)
+            offeredSkillSelect.innerHTML = '<option value="">Select your skill</option>';
+            userSkills.forEach(skill => {
+                const option = document.createElement('option');
+                option.value = skill;
+                option.textContent = skill;
+                offeredSkillSelect.appendChild(option);
+            });
+            
+            modal.style.display = 'block';
+            modal.dataset.userId = user.id;
+        }
+
+        function closeModal() {
+            document.getElementById('swapModal').style.display = 'none';
+        }
+
+        function submitSwapRequest(event) {
+            event.preventDefault();
+            
+            const userId = document.getElementById('swapModal').dataset.userId;
+            const requestedSkill = document.getElementById('requestedSkill').value;
+            const offeredSkill = document.getElementById('offeredSkill').value;
+            const message = document.getElementById('swapMessage').value;
+            
+            if (!requestedSkill || !offeredSkill) {
+                showMessage('Please select both skills', 'error');
+                return;
+            }
+            
+            // In a real app, this would send the request to the server
+            showMessage('Swap request sent successfully!', 'success');
+            closeModal();
+            
+            // Reset form
+            document.getElementById('requestedSkill').value = '';
+            document.getElementById('offeredSkill').value = '';
+            document.getElementById('swapMessage').value = '';
+        }
+
+        function showMessage(text, type) {
+            const message = document.createElement('div');
+            message.className = `message ${type}`;
+            message.textContent = text;
+            document.body.appendChild(message);
+            
+            setTimeout(() => {
+                message.classList.add('show');
+            }, 100);
+            
+            setTimeout(() => {
+                message.classList.remove('show');
+                setTimeout(() => {
+                    document.body.removeChild(message);
+                }, 300);
+            }, 3000);
+        }
+
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                showMessage('Logging out...', 'info');
+                // In a real app, this would handle logout logic
+            }
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('swapModal');
+            if (event.target === modal) {
+                closeModal();
+            }
+        }
+
+        // Handle escape key to close modal
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                closeModal();
+            }
+        });
+    </script>
+</body>
+</html>
