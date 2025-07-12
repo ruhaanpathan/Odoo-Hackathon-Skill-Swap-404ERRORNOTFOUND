@@ -1,0 +1,1720 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SkillSwap - My Swaps</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .navbar {
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .navbar-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+        }
+
+        .logo {
+            color: white;
+            font-size: 1.5rem;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: #667eea;
+        }
+
+        .nav-links a.active {
+            color: #667eea;
+        }
+
+        .main-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .page-title {
+            color: white;
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .page-subtitle {
+            color: rgba(255,255,255,0.9);
+            font-size: 1.2rem;
+        }
+
+        .stats-overview {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 2rem;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .tabs-container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+
+        .tabs-header {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .tab-button {
+            background: none;
+            border: none;
+            padding: 1rem 2rem;
+            font-size: 1rem;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+            color: #666;
+        }
+
+        .tab-button.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+        }
+
+        .tab-button:hover {
+            color: #667eea;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .swaps-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 2rem;
+        }
+
+        .swap-card {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .swap-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+
+        .swap-status {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .status-active {
+            background: #2ed573;
+            color: white;
+        }
+
+        .status-pending {
+            background: #ffa502;
+            color: white;
+        }
+
+        .status-completed {
+            background: #3742fa;
+            color: white;
+        }
+
+        .status-cancelled {
+            background: #ff4757;
+            color: white;
+        }
+
+        .swap-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .partner-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .partner-info h3 {
+            color: #333;
+            font-size: 1.2rem;
+            margin-bottom: 0.3rem;
+        }
+
+        .partner-location {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .swap-details {
+            margin-bottom: 1.5rem;
+        }
+
+        .skill-exchange {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .skill-box {
+            flex: 1;
+            padding: 1rem;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .skill-offering {
+            background: #e8f5e8;
+            color: #2d8f2d;
+        }
+
+        .skill-learning {
+            background: #e8f0ff;
+            color: #2d5aa0;
+        }
+
+        .exchange-arrow {
+            font-size: 1.5rem;
+            color: #667eea;
+        }
+
+        .swap-progress {
+            margin-bottom: 1.5rem;
+        }
+
+        .progress-label {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 0.5rem;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e0e0e0;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            transition: width 0.3s;
+        }
+
+        .swap-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .swap-actions {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .action-btn {
+            flex: 1;
+            padding: 0.8rem 1rem;
+            border: none;
+            border-radius: 25px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #f8f9fa;
+            color: #666;
+            border: 2px solid #e0e0e0;
+        }
+
+        .btn-success {
+            background: #2ed573;
+            color: white;
+        }
+
+        .btn-danger {
+            background: #ff4757;
+            color: white;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: #666;
+        }
+
+        .empty-state h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .empty-state p {
+            font-size: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .empty-state .action-btn {
+            display: inline-block;
+            text-decoration: none;
+            width: auto;
+        }
+
+        .filter-bar {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            align-items: center;
+        }
+
+        .filter-select {
+            padding: 0.8rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1rem;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 0.8rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1rem;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 1000;
+        }
+
+        .modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 2rem;
+            border-radius: 20px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-title {
+            color: #333;
+            font-size: 1.5rem;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #666;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 0.8rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1rem;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .message {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 1rem 2rem;
+            border-radius: 10px;
+            color: white;
+            font-weight: 600;
+            z-index: 1001;
+            transform: translateX(100%);
+            transition: transform 0.3s;
+        }
+
+        .message.show {
+            transform: translateX(0);
+        }
+
+        .message.success {
+            background: #2ed573;
+        }
+
+        .message.error {
+            background: #ff4757;
+        }
+
+        .message.info {
+            background: #48dbfb;
+        }
+
+        @media (max-width: 768px) {
+            .swaps-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats-overview {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .tabs-header {
+                flex-wrap: wrap;
+            }
+            
+            .filter-bar {
+                flex-direction: column;
+            }
+            
+            .skill-exchange {
+                flex-direction: column;
+            }
+            
+            .swap-actions {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-content">
+            <a href="#" class="logo">🔄 SkillSwap</a>
+            <div class="nav-links">
+                <a href="index.html" onclick="showMessage('Navigating to Home', 'info')">Home</a>
+                <a href="browse.html" onclick="showMessage('Navigating to Browse', 'info')">Browse</a>
+                <a href="profile.html" onclick="showMessage('Navigating to Profile', 'info')">Profile</a>
+                <a href="#" class="active">My Swaps</a>
+                <a href="#" onclick="logout()">Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="main-container">
+        <div class="page-header">
+            <h1 class="page-title">📋 My Swaps</h1>
+            <p class="page-subtitle">Manage your skill exchanges and track your progress</p>
+        </div>
+
+        <div class="stats-overview">
+            <div class="stat-card">
+                <div class="stat-number">5</div>
+                <div class="stat-label">Active Swaps</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">3</div>
+                <div class="stat-label">Pending Requests</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">12</div>
+                <div class="stat-label">Completed</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">4.8</div>
+                <div class="stat-label">Average Rating</div>
+            </div>
+        </div>
+
+        <div class="tabs-container">
+            <div class="tabs-header">
+                <button class="tab-button active" onclick="switchTab('active')">🔄 Active Swaps</button>
+                <button class="tab-button" onclick="switchTab('pending')">⏳ Pending</button>
+                <button class="tab-button" onclick="switchTab('completed')">✅ Completed</button>
+                <button class="tab-button" onclick="switchTab('cancelled')">❌ Cancelled</button>
+            </div>
+
+            <div class="filter-bar">
+                <input type="text" class="search-input" placeholder="Search swaps..." id="searchInput">
+                <select class="filter-select" id="skillFilter">
+                    <option value="">All Skills</option>
+                    <option value="javascript">JavaScript</option>
+                    <option value="python">Python</option>
+                    <option value="design">Design</option>
+                    <option value="photography">Photography</option>
+                </select>
+                <select class="filter-select" id="sortBy">
+                    <option value="newest">Newest First</option>
+                    <option value="oldest">Oldest First</option>
+                    <option value="progress">By Progress</option>
+                </select>
+            </div>
+
+            <!-- Active Swaps Tab -->
+            <div id="active" class="tab-content active">
+                <div class="swaps-grid" id="activeSwapsGrid">
+                    <!-- Active swaps will be populated here -->
+                </div>
+            </div>
+
+            <!-- Pending Requests Tab -->
+            <div id="pending" class="tab-content">
+                <div class="swaps-grid" id="pendingSwapsGrid">
+                    <!-- Pending swaps will be populated here -->
+                </div>
+            </div>
+
+            <!-- Completed Swaps Tab -->
+            <div id="completed" class="tab-content">
+                <div class="swaps-grid" id="completedSwapsGrid">
+                    <!-- Completed swaps will be populated here -->
+                </div>
+            </div>
+
+            <!-- Cancelled Swaps Tab -->
+            <div id="cancelled" class="tab-content">
+                <div class="swaps-grid" id="cancelledSwapsGrid">
+                    <!-- Cancelled swaps will be populated here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Schedule Session Modal -->
+    <div class="modal" id="scheduleModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Schedule Session</h3>
+                <button class="close-btn" onclick="closeModal('scheduleModal')">&times;</button>
+            </div>
+            <form class="schedule-form" onsubmit="scheduleSession(event)">
+                <div class="form-group">
+                    <label>Session Type</label>
+                    <select id="sessionType" required>
+                        <option value="">Select session type</option>
+                        <option value="video">Video Call</option>
+                        <option value="voice">Voice Call</option>
+                        <option value="chat">Text Chat</option>
+                        <option value="in-person">In Person</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Date</label>
+                    <input type="date" id="sessionDate" required>
+                </div>
+                <div class="form-group">
+                    <label>Time</label>
+                    <input type="time" id="sessionTime" required>
+                </div>
+                <div class="form-group">
+                    <label>Duration (minutes)</label>
+                    <select id="sessionDuration" required>
+                        <option value="30">30 minutes</option>
+                        <option value="60">1 hour</option>
+                        <option value="90">1.5 hours</option>
+                        <option value="120">2 hours</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Notes (Optional)</label>
+                    <textarea id="sessionNotes" placeholder="Any specific topics or goals for this session?"></textarea>
+                </div>
+                <button type="submit" class="action-btn btn-primary">Schedule Session</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Rate Partner Modal -->
+    <div class="modal" id="rateModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Rate Your Partner</h3>
+                <button class="close-btn" onclick="closeModal('rateModal')">&times;</button>
+            </div>
+            <form class="rate-form" onsubmit="submitRating(event)">
+                <div class="form-group">
+                    <label>Overall Rating</label>
+                    <div class="rating-stars" id="ratingStars">
+                        <span class="star" data-rating="1">⭐</span>
+                        <span class="star" data-rating="2">⭐</span>
+                        <span class="star" data-rating="3">⭐</span>
+                        <span class="star" data-rating="4">⭐</span>
+                        <span class="star" data-rating="5">⭐</span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Review (Optional)</label>
+                    <textarea id="reviewText" placeholder="Share your experience with this skill exchange..."></textarea>
+                </div>
+                <button type="submit" class="action-btn btn-success">Submit Rating</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        class SkillSwapManager {
+    constructor() {
+        this.swapsData = {
+            active: [
+                {
+                    id: 1,
+                    partner: { name: "Sarah Chen", avatar: "S", location: "San Francisco, CA" },
+                    offering: "JavaScript",
+                    learning: "UI/UX Design",
+                    progress: 75,
+                    startDate: "2024-06-15",
+                    sessions: 6,
+                    totalSessions: 8,
+                    nextSession: "2024-07-15T14:00:00",
+                    skillLevel: "Intermediate"
+                },
+                {
+                    id: 2,
+                    partner: { name: "Miguel Rodriguez", avatar: "M", location: "Remote" },
+                    offering: "Photography",
+                    learning: "Spanish",
+                    progress: 50,
+                    startDate: "2024-06-20",
+                    sessions: 4,
+                    totalSessions: 8,
+                    nextSession: "2024-07-16T10:00:00",
+                    skillLevel: "Beginner"
+                },
+                {
+                    id: 3,
+                    partner: { name: "Emma Wilson", avatar: "E", location: "London, UK" },
+                    offering: "React",
+                    learning: "Photography",
+                    progress: 25,
+                    startDate: "2024-07-01",
+                    sessions: 2,
+                    totalSessions: 8,
+                    nextSession: "2024-07-14T16:00:00",
+                    skillLevel: "Advanced"
+                }
+            ],
+            pending: [
+                {
+                    id: 4,
+                    partner: { name: "David Kim", avatar: "D", location: "Seoul, South Korea" },
+                    offering: "Web Development",
+                    learning: "Guitar",
+                    type: "incoming",
+                    requestDate: "2024-07-10",
+                    message: "Hi! I'd love to learn web development and I can teach you guitar in return.",
+                    urgency: "high"
+                },
+                {
+                    id: 5,
+                    partner: { name: "Lisa Anderson", avatar: "L", location: "Toronto, Canada" },
+                    offering: "Marketing",
+                    learning: "Fitness Training",
+                    type: "outgoing",
+                    requestDate: "2024-07-08",
+                    message: "Hello! I'm interested in learning fitness training. I can help you with marketing strategies.",
+                    urgency: "medium"
+                },
+                {
+                    id: 9,
+                    partner: { name: "Alex Johnson", avatar: "A", location: "New York, NY" },
+                    offering: "Data Science",
+                    learning: "Public Speaking",
+                    type: "incoming",
+                    requestDate: "2024-07-11",
+                    message: "I can teach you data science and would love to improve my public speaking skills.",
+                    urgency: "low"
+                }
+            ],
+            completed: [
+                {
+                    id: 6,
+                    partner: { name: "Carlos Martinez", avatar: "C", location: "Mexico City, Mexico" },
+                    offering: "Python",
+                    learning: "Cooking",
+                    completedDate: "2024-06-01",
+                    rating: 4.8,
+                    review: "Amazing teacher! Learned so much about Mexican cuisine.",
+                    duration: "3 months",
+                    totalHours: 24
+                },
+                {
+                    id: 7,
+                    partner: { name: "Anna Petrov", avatar: "A", location: "Remote" },
+                    offering: "Design",
+                    learning: "Digital Marketing",
+                    completedDate: "2024-05-15",
+                    rating: 4.9,
+                    review: "Excellent mentor in digital marketing strategies.",
+                    duration: "2 months",
+                    totalHours: 16
+                }
+            ],
+            cancelled: [
+                {
+                    id: 8,
+                    partner: { name: "James Wright", avatar: "J", location: "Austin, TX" },
+                    offering: "Fitness",
+                    learning: "Photography",
+                    cancelledDate: "2024-06-10",
+                    reason: "Schedule conflicts",
+                    cancelledBy: "mutual"
+                }
+            ]
+        };
+        
+        this.currentTab = 'active';
+        this.selectedRating = 0;
+        this.filters = {
+            search: '',
+            skill: '',
+            sortBy: 'newest'
+        };
+        
+        this.init();
+    }
+
+    init() {
+        this.bindEvents();
+        this.renderSwaps();
+        this.updateStats();
+        this.initializeRatingStars();
+        this.setInitialDate();
+    }
+
+    bindEvents() {
+        // Search and filter events
+        const searchInput = document.getElementById('searchInput');
+        const skillFilter = document.getElementById('skillFilter');
+        const sortBy = document.getElementById('sortBy');
+
+        searchInput?.addEventListener('input', this.debounce((e) => {
+            this.filters.search = e.target.value.toLowerCase();
+            this.renderSwaps();
+        }, 300));
+
+        skillFilter?.addEventListener('change', (e) => {
+            this.filters.skill = e.target.value;
+            this.renderSwaps();
+        });
+
+        sortBy?.addEventListener('change', (e) => {
+            this.filters.sortBy = e.target.value;
+            this.renderSwaps();
+        });
+
+        // Modal events
+        document.addEventListener('click', (e) => {
+            if (e.target.classList.contains('modal')) {
+                this.closeModal(e.target.id);
+            }
+        });
+
+        // ESC key to close modals
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                this.closeAllModals();
+            }
+        });
+    }
+
+    debounce(func, wait) {
+        let timeout;
+        return function executedFunction(...args) {
+            const later = () => {
+                clearTimeout(timeout);
+                func(...args);
+            };
+            clearTimeout(timeout);
+            timeout = setTimeout(later, wait);
+        };
+    }
+
+    switchTab(tabName) {
+        // Update tab buttons
+        document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+        document.querySelector(`[onclick="switchTab('${tabName}')"]`)?.classList.add('active');
+        
+        // Update tab content
+        document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+        document.getElementById(tabName)?.classList.add('active');
+        
+        this.currentTab = tabName;
+        this.renderSwaps();
+    }
+
+    renderSwaps() {
+        const container = document.getElementById(`${this.currentTab}SwapsGrid`);
+        if (!container) return;
+
+        const swaps = this.getFilteredSwaps();
+        
+        if (swaps.length === 0) {
+            container.innerHTML = this.createEmptyState();
+            return;
+        }
+        
+        container.innerHTML = swaps.map(swap => this.createSwapCard(swap)).join('');
+    }
+
+    getFilteredSwaps() {
+        let swaps = [...(this.swapsData[this.currentTab] || [])];
+
+        // Apply search filter
+        if (this.filters.search) {
+            swaps = swaps.filter(swap => 
+                swap.partner.name.toLowerCase().includes(this.filters.search) ||
+                swap.offering.toLowerCase().includes(this.filters.search) ||
+                swap.learning.toLowerCase().includes(this.filters.search) ||
+                swap.partner.location.toLowerCase().includes(this.filters.search)
+            );
+        }
+
+        // Apply skill filter
+        if (this.filters.skill) {
+            swaps = swaps.filter(swap => 
+                swap.offering.toLowerCase().includes(this.filters.skill) ||
+                swap.learning.toLowerCase().includes(this.filters.skill)
+            );
+        }
+
+        // Apply sorting
+        return this.sortSwaps(swaps);
+    }
+
+    sortSwaps(swaps) {
+        const sortBy = this.filters.sortBy;
+        
+        switch (sortBy) {
+            case 'oldest':
+                return swaps.sort((a, b) => 
+                    new Date(a.startDate || a.requestDate || a.completedDate) - 
+                    new Date(b.startDate || b.requestDate || b.completedDate)
+                );
+            case 'progress':
+                if (this.currentTab === 'active') {
+                    return swaps.sort((a, b) => (b.progress || 0) - (a.progress || 0));
+                }
+                return swaps;
+            case 'rating':
+                if (this.currentTab === 'completed') {
+                    return swaps.sort((a, b) => (b.rating || 0) - (a.rating || 0));
+                }
+                return swaps;
+            case 'urgency':
+                if (this.currentTab === 'pending') {
+                    const urgencyOrder = { high: 3, medium: 2, low: 1 };
+                    return swaps.sort((a, b) => 
+                        (urgencyOrder[b.urgency] || 0) - (urgencyOrder[a.urgency] || 0)
+                    );
+                }
+                return swaps;
+            default: // newest
+                return swaps.sort((a, b) => 
+                    new Date(b.startDate || b.requestDate || b.completedDate) - 
+                    new Date(a.startDate || a.requestDate || a.completedDate)
+                );
+        }
+    }
+
+    createSwapCard(swap) {
+        const cardCreators = {
+            active: this.createActiveSwapCard.bind(this),
+            pending: this.createPendingSwapCard.bind(this),
+            completed: this.createCompletedSwapCard.bind(this),
+            cancelled: this.createCancelledSwapCard.bind(this)
+        };
+
+        return cardCreators[this.currentTab]?.(swap) || '';
+    }
+
+    createActiveSwapCard(swap) {
+        const nextSession = swap.nextSession ? new Date(swap.nextSession) : null;
+        const timeUntilSession = nextSession ? this.getTimeUntilSession(nextSession) : null;
+        
+        return `
+            <div class="swap-card" data-swap-id="${swap.id}">
+                <div class="swap-status status-active">Active</div>
+                <div class="swap-header">
+                    <div class="partner-avatar">${swap.partner.avatar}</div>
+                    <div class="partner-info">
+                        <h3>${swap.partner.name}</h3>
+                        <div class="partner-location">📍 ${swap.partner.location}</div>
+                        <div class="skill-level">Level: ${swap.skillLevel}</div>
+                    </div>
+                </div>
+                <div class="swap-details">
+                    <div class="skill-exchange">
+                        <div class="skill-box skill-offering">
+                            <div>You're teaching</div>
+                            <strong>${swap.offering}</strong>
+                        </div>
+                        <div class="exchange-arrow">🔄</div>
+                        <div class="skill-box skill-learning">
+                            <div>You're learning</div>
+                            <strong>${swap.learning}</strong>
+                        </div>
+                    </div>
+                    <div class="swap-progress">
+                        <div class="progress-label">
+                            Progress: ${swap.sessions}/${swap.totalSessions} sessions completed
+                            ${timeUntilSession ? `<span class="next-session">Next: ${timeUntilSession}</span>` : ''}
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: ${swap.progress}%"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="swap-meta">
+                    <span>Started: ${this.formatDate(swap.startDate)}</span>
+                    <span>${swap.progress}% Complete</span>
+                </div>
+                <div class="swap-actions">
+                    <button class="action-btn btn-primary" onclick="skillSwap.openScheduleModal(${swap.id})">
+                        📅 Schedule Session
+                    </button>
+                    <button class="action-btn btn-secondary" onclick="skillSwap.viewSwapDetails(${swap.id})">
+                        👁️ View Details
+                    </button>
+                    ${swap.progress >= 100 ? 
+                        `<button class="action-btn btn-success" onclick="skillSwap.completeSwap(${swap.id})">
+                            ✅ Complete Swap
+                        </button>` : ''
+                    }
+                </div>
+            </div>
+        `;
+    }
+
+    createPendingSwapCard(swap) {
+        const isIncoming = swap.type === 'incoming';
+        const urgencyClass = `urgency-${swap.urgency}`;
+        
+        return `
+            <div class="swap-card ${urgencyClass}" data-swap-id="${swap.id}">
+                <div class="swap-status status-pending">
+                    ${isIncoming ? 'Incoming' : 'Outgoing'}
+                    <span class="urgency-badge ${urgencyClass}">${swap.urgency}</span>
+                </div>
+                <div class="swap-header">
+                    <div class="partner-avatar">${swap.partner.avatar}</div>
+                    <div class="partner-info">
+                        <h3>${swap.partner.name}</h3>
+                        <div class="partner-location">📍 ${swap.partner.location}</div>
+                    </div>
+                </div>
+                <div class="swap-details">
+                    <div class="skill-exchange">
+                        <div class="skill-box skill-offering">
+                            <div>${isIncoming ? 'They offer' : 'You offer'}</div>
+                            <strong>${isIncoming ? swap.learning : swap.offering}</strong>
+                        </div>
+                        <div class="exchange-arrow">🔄</div>
+                        <div class="skill-box skill-learning">
+                            <div>${isIncoming ? 'They want' : 'You want'}</div>
+                            <strong>${isIncoming ? swap.offering : swap.learning}</strong>
+                        </div>
+                    </div>
+                    <div class="swap-message">
+                        <p><strong>Message:</strong> ${swap.message}</p>
+                    </div>
+                </div>
+                <div class="swap-meta">
+                    <span>Requested: ${this.formatDate(swap.requestDate)}</span>
+                    <span class="days-ago">${this.getDaysAgo(swap.requestDate)} days ago</span>
+                </div>
+                <div class="swap-actions">
+                    ${isIncoming ? `
+                        <button class="action-btn btn-success" onclick="skillSwap.acceptSwap(${swap.id})">
+                            ✅ Accept
+                        </button>
+                        <button class="action-btn btn-secondary" onclick="skillSwap.viewProfile('${swap.partner.name}')">
+                            👤 View Profile
+                        </button>
+                        <button class="action-btn btn-danger" onclick="skillSwap.declineSwap(${swap.id})">
+                            ❌ Decline
+                        </button>
+                    ` : `
+                        <button class="action-btn btn-secondary" onclick="skillSwap.editRequest(${swap.id})">
+                            ✏️ Edit Request
+                        </button>
+                        <button class="action-btn btn-danger" onclick="skillSwap.cancelRequest(${swap.id})">
+                            ❌ Cancel Request
+                        </button>
+                    `}
+                </div>
+            </div>
+        `;
+    }
+
+    createCompletedSwapCard(swap) {
+        return `
+            <div class="swap-card" data-swap-id="${swap.id}">
+                <div class="swap-status status-completed">Completed</div>
+                <div class="swap-header">
+                    <div class="partner-avatar">${swap.partner.avatar}</div>
+                    <div class="partner-info">
+                        <h3>${swap.partner.name}</h3>
+                        <div class="partner-location">📍 ${swap.partner.location}</div>
+                        <div class="swap-duration">Duration: ${swap.duration} (${swap.totalHours}h)</div>
+                    </div>
+                </div>
+                <div class="swap-details">
+                    <div class="skill-exchange">
+                        <div class="skill-box skill-offering">
+                            <div>You taught</div>
+                            <strong>${swap.offering}</strong>
+                        </div>
+                        <div class="exchange-arrow">🔄</div>
+                        <div class="skill-box skill-learning">
+                            <div>You learned</div>
+                            <strong>${swap.learning}</strong>
+                        </div>
+                    </div>
+                    <div class="swap-rating">
+                        <div class="rating-display">
+                            <span class="rating-stars">
+                                ${this.generateStars(swap.rating)}
+                            </span>
+                            <span class="rating-value">${swap.rating}/5</span>
+                        </div>
+                        <p class="review-text">"${swap.review}"</p>
+                    </div>
+                </div>
+                <div class="swap-meta">
+                    <span>Completed: ${this.formatDate(swap.completedDate)}</span>
+                </div>
+                <div class="swap-actions">
+                    <button class="action-btn btn-primary" onclick="skillSwap.startNewSwap('${swap.partner.name}')">
+                        🔄 Swap Again
+                    </button>
+                    <button class="action-btn btn-secondary" onclick="skillSwap.viewSwapDetails(${swap.id})">
+                        📊 View Stats
+                    </button>
+                    <button class="action-btn btn-secondary" onclick="skillSwap.downloadCertificate(${swap.id})">
+                        📜 Certificate
+                    </button>
+                </div>
+            </div>
+        `;
+    }
+
+    createCancelledSwapCard(swap) {
+        return `
+            <div class="swap-card" data-swap-id="${swap.id}">
+                <div class="swap-status status-cancelled">Cancelled</div>
+                <div class="swap-header">
+                    <div class="partner-avatar">${swap.partner.avatar}</div>
+                    <div class="partner-info">
+                        <h3>${swap.partner.name}</h3>
+                        <div class="partner-location">📍 ${swap.partner.location}</div>
+                        <div class="cancelled-by">Cancelled by: ${swap.cancelledBy}</div>
+                    </div>
+                </div>
+                <div class="swap-details">
+                    <div class="skill-exchange">
+                        <div class="skill-box skill-offering">
+                            <div>You offered</div>
+                            <strong>${swap.offering}</strong>
+                        </div>
+                        <div class="exchange-arrow">🔄</div>
+                        <div class="skill-box skill-learning">
+                            <div>You wanted</div>
+                            <strong>${swap.learning}</strong>
+                        </div>
+                    </div>
+                    <div class="cancellation-reason">
+                        <p><strong>Reason:</strong> ${swap.reason}</p>
+                    </div>
+                </div>
+                <div class="swap-meta">
+                    <span>Cancelled: ${this.formatDate(swap.cancelledDate)}</span>
+                </div>
+                <div class="swap-actions">
+                    <button class="action-btn btn-primary" onclick="skillSwap.retrySwap(${swap.id})">
+                        🔄 Find Similar
+                    </button>
+                    <button class="action-btn btn-secondary" onclick="skillSwap.contactSupport(${swap.id})">
+                        💬 Contact Support
+                    </button>
+                    <button class="action-btn btn-danger" onclick="skillSwap.removeSwap(${swap.id})">
+                        🗑️ Remove
+                    </button>
+                </div>
+            </div>
+        `;
+    }
+
+    createEmptyState() {
+        const messages = {
+            active: {
+                title: "No Active Swaps",
+                message: "You don't have any active skill exchanges yet. Browse skills to find your perfect match!",
+                buttonText: "Browse Skills",
+                buttonAction: "skillSwap.browseSkills()"
+            },
+            pending: {
+                title: "No Pending Requests",
+                message: "You don't have any pending swap requests at the moment.",
+                buttonText: "Find New Swaps",
+                buttonAction: "skillSwap.browseSkills()"
+            },
+            completed: {
+                title: "No Completed Swaps",
+                message: "Complete your first skill exchange to see it here!",
+                buttonText: "Start Learning",
+                buttonAction: "skillSwap.browseSkills()"
+            },
+            cancelled: {
+                title: "No Cancelled Swaps",
+                message: "Great! You haven't cancelled any swaps yet.",
+                buttonText: "Browse Skills",
+                buttonAction: "skillSwap.browseSkills()"
+            }
+        };
+
+        const state = messages[this.currentTab];
+        return `
+            <div class="empty-state">
+                <h3>${state.title}</h3>
+                <p>${state.message}</p>
+                <button class="action-btn btn-primary" onclick="${state.buttonAction}">
+                    ${state.buttonText}
+                </button>
+            </div>
+        `;
+    }
+
+    updateStats() {
+        const stats = this.calculateStats();
+        
+        document.querySelector('.stat-card:nth-child(1) .stat-number').textContent = stats.active;
+        document.querySelector('.stat-card:nth-child(2) .stat-number').textContent = stats.pending;
+        document.querySelector('.stat-card:nth-child(3) .stat-number').textContent = stats.completed;
+        document.querySelector('.stat-card:nth-child(4) .stat-number').textContent = stats.rating;
+    }
+
+    calculateStats() {
+        const completedSwaps = this.swapsData.completed || [];
+        const averageRating = completedSwaps.length > 0 
+            ? (completedSwaps.reduce((sum, swap) => sum + swap.rating, 0) / completedSwaps.length).toFixed(1)
+            : '0.0';
+
+        return {
+            active: this.swapsData.active?.length || 0,
+            pending: this.swapsData.pending?.length || 0,
+            completed: completedSwaps.length,
+            rating: averageRating
+        };
+    }
+
+    // Modal management
+    openScheduleModal(swapId) {
+        const modal = document.getElementById('scheduleModal');
+        if (modal) {
+            modal.style.display = 'block';
+            modal.setAttribute('data-swap-id', swapId);
+            document.body.style.overflow = 'hidden';
+        }
+    }
+
+    openRateModal(swapId) {
+        const modal = document.getElementById('rateModal');
+        if (modal) {
+            modal.style.display = 'block';
+            modal.setAttribute('data-swap-id', swapId);
+            document.body.style.overflow = 'hidden';
+        }
+    }
+
+    closeModal(modalId) {
+        const modal = document.getElementById(modalId);
+        if (modal) {
+            modal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+    }
+
+    closeAllModals() {
+        document.querySelectorAll('.modal').forEach(modal => {
+            modal.style.display = 'none';
+        });
+        document.body.style.overflow = 'auto';
+    }
+
+    // Action methods
+    async acceptSwap(swapId) {
+        try {
+            this.showMessage('Processing swap acceptance...', 'info');
+            
+            // Simulate API call
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            
+            const swapIndex = this.swapsData.pending.findIndex(s => s.id === swapId);
+            if (swapIndex !== -1) {
+                const swap = this.swapsData.pending.splice(swapIndex, 1)[0];
+                this.swapsData.active.push({
+                    ...swap,
+                    progress: 0,
+                    startDate: new Date().toISOString().split('T')[0],
+                    sessions: 0,
+                    totalSessions: 8,
+                    skillLevel: 'Beginner'
+                });
+                
+                this.updateStats();
+                this.renderSwaps();
+                this.showMessage('Swap request accepted! You can now schedule your first session.', 'success');
+            }
+        } catch (error) {
+            this.showMessage('Failed to accept swap. Please try again.', 'error');
+        }
+    }
+
+    async declineSwap(swapId) {
+        if (confirm('Are you sure you want to decline this swap request?')) {
+            this.swapsData.pending = this.swapsData.pending.filter(s => s.id !== swapId);
+            this.updateStats();
+            this.renderSwaps();
+            this.showMessage('Swap request declined', 'info');
+        }
+    }
+
+    async cancelRequest(swapId) {
+        if (confirm('Are you sure you want to cancel this request?')) {
+            this.swapsData.pending = this.swapsData.pending.filter(s => s.id !== swapId);
+            this.updateStats();
+            this.renderSwaps();
+            this.showMessage('Request cancelled', 'info');
+        }
+    }
+
+    completeSwap(swapId) {
+        this.openRateModal(swapId);
+    }
+
+    scheduleSession(event) {
+        event.preventDefault();
+        
+        const swapId = document.getElementById('scheduleModal').getAttribute('data-swap-id');
+        const formData = new FormData(event.target);
+        
+        const sessionData = {
+            swapId: parseInt(swapId),
+            type: formData.get('sessionType'),
+            date: formData.get('sessionDate'),
+            time: formData.get('sessionTime'),
+            duration: formData.get('sessionDuration'),
+            notes: formData.get('sessionNotes')
+        };
+        
+        // Simulate API call
+        setTimeout(() => {
+            this.showMessage('Session scheduled successfully!', 'success');
+            this.closeModal('scheduleModal');
+            event.target.reset();
+            
+            // Update swap with next session info
+            const swap = this.swapsData.active.find(s => s.id === parseInt(swapId));
+            if (swap) {
+                swap.nextSession = `${sessionData.date}T${sessionData.time}:00`;
+                this.renderSwaps();
+            }
+        }, 1000);
+    }
+
+    submitRating(event) {
+        event.preventDefault();
+        
+        const swapId = parseInt(document.getElementById('rateModal').getAttribute('data-swap-id'));
+        const rating = this.selectedRating;
+        const review = document.getElementById('reviewText').value;
+        
+        if (rating === 0) {
+            this.showMessage('Please select a rating', 'error');
+            return;
+        }
+        
+        // Move swap from active to completed
+        const activeIndex = this.swapsData.active.findIndex(s => s.id === swapId);
+        if (activeIndex !== -1) {
+            const swap = this.swapsData.active.splice(activeIndex, 1)[0];
+            this.swapsData.completed.push({
+                ...swap,
+                completedDate: new Date().toISOString().split('T')[0],
+                rating: rating,
+                review: review || 'No review provided',
+                duration: '3 months',
+                totalHours: swap.sessions * 2
+            });
+            
+            this.updateStats();
+            this.renderSwaps();
+            this.showMessage('Rating submitted and swap completed!', 'success');
+            this.closeModal('rateModal');
+            event.target.reset();
+            this.selectedRating = 0;
+        }
+    }
+
+    // Helper methods
+    formatDate(dateString) {
+        const date = new Date(dateString);
+        return date.toLocaleDateString('en-US', { 
+            year: 'numeric', 
+            month: 'short', 
+            day: 'numeric' 
+        });
+    }
+
+    getDaysAgo(dateString) {
+        const date = new Date(dateString);
+        const today = new Date();
+        const diffTime = Math.abs(today - date);
+        return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    }
+
+    getTimeUntilSession(sessionDate) {
+        const now = new Date();
+        const diff = sessionDate - now;
+        
+        if (diff < 0) return 'Overdue';
+        
+        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        
+        if (days > 0) return `${days}d ${hours}h`;
+        return `${hours}h`;
+    }
+
+    generateStars(rating) {
+        const fullStars = Math.floor(rating);
+        const hasHalfStar = rating % 1 !== 0;
+        let stars = '';
+        
+        for (let i = 0; i < fullStars; i++) {
+            stars += '⭐';
+        }
+        if (hasHalfStar) {
+            stars += '⭐';
+        }
+        
+        return stars;
+    }
+
+    initializeRatingStars() {
+        const stars = document.querySelectorAll('.star');
+        
+        stars.forEach(star => {
+            star.addEventListener('click', () => {
+                this.selectedRating = parseInt(star.getAttribute('data-rating'));
+                this.updateStarDisplay(this.selectedRating);
+            });
+
+            star.addEventListener('mouseover', () => {
+                const rating = parseInt(star.getAttribute('data-rating'));
+                this.updateStarDisplay(rating);
+            });
+        });
+
+        const ratingContainer = document.getElementById('ratingStars');
+        ratingContainer?.addEventListener('mouseleave', () => {
+            this.updateStarDisplay(this.selectedRating);
+        });
+    }
+
+    updateStarDisplay(rating) {
+        const stars = document.querySelectorAll('.star');
+        stars.forEach((star, index) => {
+            if (index < rating) {
+                star.style.opacity = '1';
+                star.style.transform = 'scale(1.2)';
+            } else {
+                star.style.opacity = '0.3';
+                star.style.transform = 'scale(1)';
+            }
+        });
+    }
+
+setInitialDate() {
+        const dateInput = document.getElementById('sessionDate');
+        if (dateInput) {
+            const today = new Date();
+            const tomorrow = new Date(today);
+            tomorrow.setDate(today.getDate() + 1);
+            dateInput.min = tomorrow.toISOString().split('T')[0];
+            dateInput.value = tomorrow.toISOString().split('T')[0];
+        }
+    }
+
+    showMessage(message, type = 'info') {
+        const messageEl = document.createElement('div');
+        messageEl.className = `message ${type}`;
+        messageEl.textContent = message;
+        messageEl.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            border-radius: 8px;
+            color: white;
+            font-weight: 500;
+            z-index: 10000;
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+            max-width: 400px;
+            word-wrap: break-word;
+        `;
+        
+        switch (type) {
+            case 'success':
+                messageEl.style.backgroundColor = '#10b981';
+                break;
+            case 'error':
+                messageEl.style.backgroundColor = '#ef4444';
+                break;
+            case 'warning':
+                messageEl.style.backgroundColor = '#f59e0b';
+                break;
+            default:
+                messageEl.style.backgroundColor = '#3b82f6';
+        }
+        
+        document.body.appendChild(messageEl);
+        
+        setTimeout(() => messageEl.style.transform = 'translateX(0)', 100);
+        setTimeout(() => {
+            messageEl.style.transform = 'translateX(100%)';
+            setTimeout(() => messageEl.remove(), 300);
+        }, 3000);
+    }
+
+    // Additional utility methods
+    viewSwapDetails(swapId) {
+        const swap = this.findSwapById(swapId);
+        if (swap) {
+            this.showMessage(`Opening details for swap with ${swap.partner.name}`, 'info');
+            // Here you would typically open a detailed modal or navigate to a details page
+        }
+    }
+
+    viewProfile(partnerName) {
+        this.showMessage(`Opening profile for ${partnerName}`, 'info');
+        // Profile viewing functionality
+    }
+
+    editRequest(swapId) {
+        this.showMessage('Opening edit form...', 'info');
+        // Edit request functionality
+    }
+
+    startNewSwap(partnerName) {
+        this.showMessage(`Starting new swap with ${partnerName}...`, 'info');
+        // New swap creation functionality
+    }
+
+    retrySwap(swapId) {
+        this.showMessage('Finding similar swaps...', 'info');
+        // Retry functionality
+    }
+
+    removeSwap(swapId) {
+        if (confirm('Are you sure you want to remove this swap?')) {
+            this.swapsData.cancelled = this.swapsData.cancelled.filter(s => s.id !== swapId);
+            this.updateStats();
+            this.renderSwaps();
+            this.showMessage('Swap removed', 'info');
+        }
+    }
+
+    contactSupport(swapId) {
+        this.showMessage('Opening support chat...', 'info');
+        // Support functionality
+    }
+
+    downloadCertificate(swapId) {
+        const swap = this.findSwapById(swapId);
+        if (swap) {
+            this.showMessage(`Downloading certificate for ${swap.learning} course`, 'success');
+            // Certificate download functionality
+        }
+    }
+
+    browseSkills() {
+        this.showMessage('Redirecting to browse page...', 'info');
+        // Navigation to browse page
+    }
+
+    findSwapById(swapId) {
+        for (const category in this.swapsData) {
+            const swap = this.swapsData[category].find(s => s.id === swapId);
+            if (swap) return swap;
+        }
+        return null;
+    }
+
+    // Performance optimization methods
+    throttle(func, delay) {
+        let timeoutId;
+        let lastExecTime = 0;
+        return function (...args) {
+            const currentTime = Date.now();
+            
+            if (currentTime - lastExecTime > delay) {
+                func.apply(this, args);
+                lastExecTime = currentTime;
+            } else {
+                clearTimeout(timeoutId);
+                timeoutId = setTimeout(() => {
+                    func.apply(this, args);
+                    lastExecTime = Date.now();
+                }, delay - (currentTime - lastExecTime));
+            }
+        };
+    }
+
+    // Cleanup method
+    destroy() {
+        this.closeAllModals();
+        // Remove any event listeners if needed
+        document.removeEventListener('keydown', this.handleKeyDown);
+        document.removeEventListener('click', this.handleDocumentClick);
+    }
+
+    handleKeyDown = (e) => {
+        if (e.key === 'Escape') {
+            this.closeAllModals();
+        }
+    }
+
+    handleDocumentClick = (e) => {
+        if (e.target.classList.contains('modal')) {
+            this.closeModal(e.target.id);
+        }
+    }
+}
+
+// Initialize the SkillSwap manager
+let skillSwap;
+
+// Global functions for onclick handlers (to maintain compatibility)
+function switchTab(tabName) {
+    skillSwap.switchTab(tabName);
+}
+
+function openScheduleModal(swapId) {
+    skillSwap.openScheduleModal(swapId);
+}
+
+function closeModal(modalId) {
+    skillSwap.closeModal(modalId);
+}
+
+function scheduleSession(event) {
+    skillSwap.scheduleSession(event);
+}
+
+function openRateModal(swapId) {
+    skillSwap.openRateModal(swapId);
+}
+
+function submitRating(event) {
+    skillSwap.submitRating(event);
+}
+
+function acceptSwap(swapId) {
+    skillSwap.acceptSwap(swapId);
+}
+
+function declineSwap(swapId) {
+    skillSwap.declineSwap(swapId);
+}
+
+function cancelRequest(swapId) {
+    skillSwap.cancelRequest(swapId);
+}
+
+function logout() {
+    skillSwap.showMessage('Logging out...', 'info');
+    setTimeout(() => {
+        window.location.href = '/login';
+    }, 1000);
+}
+
+// Initialize when DOM is loaded
+document.addEventListener('DOMContentLoaded', function() {
+    skillSwap = new SkillSwapManager();
+    
+    // Set initial tab
+    skillSwap.switchTab('active');
+    
+    // Initialize default date for session scheduling
+    skillSwap.setInitialDate();
+});
+
+// Handle page visibility changes for performance
+document.addEventListener('visibilitychange', function() {
+    if (document.hidden) {
+        // Page is hidden, you could pause timers, etc.
+        console.log('SkillSwap page hidden');
+    } else {
+        // Page is visible, refresh data if needed
+        console.log('SkillSwap page visible');
+        skillSwap.updateStats();
+    }
+});
+
+// Error handling for the entire application
+window.addEventListener('error', function(event) {
+    console.error('SkillSwap Error:', event.error);
+    skillSwap?.showMessage('An error occurred. Please refresh the page.', 'error');
+});
+
+// Cleanup on page unload
+window.addEventListener('beforeunload', function() {
+    skillSwap?.destroy();
+});
+    </script>
+</body>
+</html>

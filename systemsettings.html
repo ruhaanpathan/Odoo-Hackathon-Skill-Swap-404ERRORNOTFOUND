@@ -1,0 +1,1162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SkillsSwap - System Settings</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: pulse 4s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            position: relative;
+            z-index: 1;
+        }
+
+        .settings-nav {
+            background: #f8fafc;
+            border-bottom: 1px solid #e2e8f0;
+            padding: 0;
+            overflow-x: auto;
+        }
+
+        .nav-tabs {
+            display: flex;
+            list-style: none;
+            min-width: max-content;
+        }
+
+        .nav-tab {
+            padding: 20px 30px;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+            color: #64748b;
+            font-weight: 500;
+            white-space: nowrap;
+        }
+
+        .nav-tab:hover {
+            background: #e2e8f0;
+            color: #334155;
+        }
+
+        .nav-tab.active {
+            background: white;
+            color: #4f46e5;
+            border-bottom-color: #4f46e5;
+        }
+
+        .settings-content {
+            padding: 40px;
+        }
+
+        .settings-section {
+            display: none;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        .settings-section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+            color: #1e293b;
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .section-description {
+            color: #64748b;
+            margin-bottom: 30px;
+            font-size: 1.1rem;
+        }
+
+        .setting-group {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e2e8f0;
+            transition: all 0.3s ease;
+        }
+
+        .setting-group:hover {
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .setting-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .setting-item:last-child {
+            border-bottom: none;
+        }
+
+        .setting-label {
+            flex: 1;
+        }
+
+        .setting-title {
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 5px;
+        }
+
+        .setting-desc {
+            color: #64748b;
+            font-size: 0.9rem;
+        }
+
+        .setting-control {
+            margin-left: 20px;
+        }
+
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: #cbd5e1;
+            transition: 0.4s;
+            border-radius: 34px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background: white;
+            transition: 0.4s;
+            border-radius: 50%;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        input:checked + .slider {
+            background: #4f46e5;
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .input-field {
+            padding: 12px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            min-width: 200px;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+
+        .select-field {
+            padding: 12px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 1rem;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 200px;
+        }
+
+        .select-field:focus {
+            outline: none;
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #4338ca 0%, #6d28d9 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(79, 70, 229, 0.3);
+        }
+
+        .btn-secondary {
+            background: #f1f5f9;
+            color: #475569;
+        }
+
+        .btn-secondary:hover {
+            background: #e2e8f0;
+            transform: translateY(-2px);
+        }
+
+        .btn-danger {
+            background: #ef4444;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #dc2626;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(239, 68, 68, 0.3);
+        }
+
+        .save-bar {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e2e8f0;
+            display: none;
+            animation: slideUp 0.3s ease-out;
+        }
+
+        .save-bar.show {
+            display: block;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(100px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .color-picker {
+            width: 50px;
+            height: 40px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            cursor: pointer;
+            padding: 2px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            opacity: 0.9;
+        }
+
+        @media (max-width: 768px) {
+            .settings-content {
+                padding: 20px;
+            }
+            
+            .setting-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+            
+            .setting-control {
+                margin-left: 0;
+            }
+            
+            .input-field, .select-field {
+                min-width: 100%;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>⚙️ System Settings</h1>
+            <p>Configure your SkillsSwap platform settings</p>
+        </div>
+
+        <nav class="settings-nav">
+            <ul class="nav-tabs">
+                <li class="nav-tab active" data-tab="general">General</li>
+                <li class="nav-tab" data-tab="users">User Management</li>
+                <li class="nav-tab" data-tab="skills">Skills & Categories</li>
+                <li class="nav-tab" data-tab="notifications">Notifications</li>
+                <li class="nav-tab" data-tab="security">Security</li>
+                <li class="nav-tab" data-tab="appearance">Appearance</li>
+                <li class="nav-tab" data-tab="advanced">Advanced</li>
+            </ul>
+        </nav>
+
+        <div class="settings-content">
+            <!-- General Settings -->
+            <div class="settings-section active" id="general">
+                <h2 class="section-title">General Settings</h2>
+                <p class="section-description">Configure basic platform settings and preferences</p>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-number">1,247</div>
+                        <div class="stat-label">Active Users</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">89</div>
+                        <div class="stat-label">Skills Listed</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">342</div>
+                        <div class="stat-label">Successful Swaps</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">98.5%</div>
+                        <div class="stat-label">Satisfaction Rate</div>
+                    </div>
+                </div>
+
+                <div class="setting-group">
+                    <div class="setting-item">
+                        <div class="setting-label">
+                            <div class="setting-title">Platform Name</div>
+                            <div class="setting-desc">Display name for your skills exchange platform</div>
+                        </div>
+                        <div class="setting-control">
+                            <input type="text" class="input-field" value="SkillsSwap" placeholder="Platform Name">
+                        </div>
+                    </div>
+                    <div class="setting-item">
+                        <div class="setting-label">
+                            <div class="setting-title">Default Language</div>
+                            <div class="setting-desc">Primary language for the platform interface</div>
+                        </div>
+                        <div class="setting-control">
+                            <select class="select-field">
+                                <option value="en">English</option>
+                                <option value="es">Spanish</option>
+                                <option value="fr">French</option>
+                                <option value="de">German</option>
+                                <option value="it">Italian</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="setting-item">
+                        <div class="setting-label">
+                            <div class="setting-title">Time Zone</div>
+                            <div class="setting-desc">Default time zone for scheduling and notifications</div>
+                        </div>
+                        <div class="setting-control">
+                            <select class="select-field">
+                                <option value="UTC">UTC (Coordinated Universal Time)</option>
+                                <option value="PST">PST (Pacific Standard Time)</option>
+                                <option value="EST">EST (Eastern Standard Time)</option>
+                                <option value="GMT">GMT (Greenwich Mean Time)</option>
+                                <option value="CET">CET (Central European Time)</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="setting-group">
+                    <div class="setting-item">
+                        <div class="setting-label">
+                            <div class="setting-title">Enable Public Registration</div>
+                            <div class="setting-desc">Allow new users to register without invitation</div>
+                        </div>
+                        <div class="setting-control">
+                            <label class="toggle-switch">
+                                <input type="checkbox" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="setting-item">
+                        <div class="setting-label">
+                            <div class="setting-title">Skill Verification Required</div>
+                            <div class="setting-desc">Require users to verify their skills before listing</div>
+                        </div>
+                        <div class="setting-control">
+                            <label class="toggle-switch">
+                                <input type="checkbox">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="setting-item">
+                        <div class="setting-label">
+                            <div class="setting-title">Enable Rating System</div>
+                            <div class="setting-desc">Allow users to rate their skill swap experiences</div>
+                        </div>
+                        <div class="setting-control">
+                            <label class="toggle-switch">
+                                <input type="checkbox" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- User Management -->
+            <div class="settings-section" id="users">
+                <h2 class="section-title">User Management</h2>
+                <p class="section-description">Configure user roles, permissions, and moderation settings</p>
+
+                <div class="setting-group">
+                    <div class="setting-item">
+                        <div class="setting-label">
+                            <div class="setting-title">Default User Role</div>
+                            <div class="setting-desc">Role assigned to new users upon registration</div>
+                        </div>
+                        <div class="setting-control">
+                            <select class="select-field">
+                                <option value="member">Member</option>
+                                <option value="verified">Verified Member</option>
+                                <option value="contributor">Contributor</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="setting-item">
+                        <div class="setting-label">
+                            <div class="setting-title">Profile Approval Required</div>
+                            <div class="setting-desc">Require admin approval for new user profiles</div>
+                        </div>
+                        <div class="setting-control">
+                            <label class="toggle-switch">
+                                <input type="checkbox">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="setting-item">
+                        <div class="setting-label">
+                            <div class="setting-title">Maximum Skills per User</div>
+                            <div class="setting-desc">Limit the number of skills a user can list</div>
+                        </div>
+                        <div class="setting-control">
+                            <input type="number" class="input-field" value="10" min="1" max="50">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="setting-group">
+                    <div class="setting-item">
+                        <div class="setting-label">
+                            <div class="setting-title">Enable User Blocking</div>
+                            <div class="setting-desc">Allow users to block other users</div>
+                        </div>
+                        <div class="setting-control">
+                            <label class="toggle-switch">
+                                <input type="checkbox" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="setting-item">
+                        <div class="setting-label">
+                            <div class="setting-title">Auto-Suspend Reported Users</div>
+                            <div class="setting-desc">Automatically suspend users after multiple reports</div>
+                        </div>
+                        <div class="setting-control">
+                            <label class="toggle-switch">
+                                <input type="checkbox">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="setting-item">
+                        <div class="setting-label">
+                            <div class="setting-title">Report Threshold</div>
+                            <div class="setting-desc">Number of reports before auto-suspension</div>
+                        </div>
+                        <div class="setting-control">
+                            <input type="number" class="input-field" value="3" min="1" max="10">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Skills & Categories -->
+            <div class="settings-section" id="skills">
+                <h2 class="section-title">Skills & Categories</h2>
+                <p class="section-description">Manage skill categories and validation requirements</p>
+
+                <div class="setting-group">
+                    <div class="setting-item">
+                        <div class="setting-label">
+                            <div class="setting-title">Allow Custom Skills</div>
+                            <div class="setting-desc">Users can add skills not in predefined categories</div>
+                        </div>
+                        <div class="setting-control">
+                            <label class="toggle-switch">
+                                <input type="checkbox" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="setting-item">
+                        <div class="setting-label">
+                            <div class="setting-title">Skill Level Requirements</div>
+                            <div class="setting-desc">Require users to specify their skill level</div>
+                        </div>
+                        <div class="setting-control">
+                            <label class="toggle-switch">
+                                <input type="checkbox" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="setting-item">
+                        <div class="setting-label">
+                            <div class="setting-title">Featured Skills Limit</div>
+                            <div class="setting-desc">Maximum number of skills shown in featured section</div>
+                        </div>
+                        <div class="setting-control">
+                            <input type="number" class="input-field" value="12" min="6" max="24">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="setting-group">
+                    <div class="setting-item">
+                        <div class="setting-label">
+                            <div class="setting-title">Skill Categories</div>
+                            <div class="setting-desc">Manage main skill categories</div>
+                        </div>
+                        <div class="setting-control">
+                            <button class="btn btn-secondary">Manage Categories</button>
+                        </div>
+                    </div>
+                    <div class="setting-item">
+                        <div class="setting-label">
+                            <div class="setting-title">Export Skills Data</div>
+                            <div class="setting-desc">Download skills and usage statistics</div>
+                        </div>
+                        <div class="setting-control">
+                            <button class="btn btn-secondary">Export CSV</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Notifications -->
+            <div class="settings-section" id="notifications">
+                <h2 class="section-title">Notification Settings</h2>
+                <p class="section-description">Configure email and push notification preferences</p>
+
+                <div class="setting-group">
+                    <div class="setting-item">
+                        <div class="setting-label">
+                            <div class="setting-title">Email Notifications</div>
+                            <div class="setting-desc">Send email notifications for important events</div>
+                        </div>
+                        <div class="setting-control">
+                            <label class="toggle-switch">
+                                <input type="checkbox" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="setting-item">
+                        <div class="setting-label">
+                            <div class="setting-title">Push Notifications</div>
+                            <div class="setting-desc">Browser push notifications for real-time updates</div>
+                        </div>
+                        <div class="setting-control">
+                            <label class="toggle-switch">
+                                <input type="checkbox" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="setting-item">
+                        <div class="setting-label">
+                            <div class="setting-title">SMS Notifications</div>
+                            <div class="setting-desc">Text message notifications for urgent updates</div>
+                        </div>
+                        <div class="setting-control">
+                            <label class="toggle-switch">
+                                <input type="checkbox">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="setting-group">
+                    <div class="setting-item">
+                        <div class="setting-label">
+                            <div class="setting-title">Daily Digest</div>
+                            <div class="setting-desc">Send daily summary of platform activity</div>
+                        </div>
+                        <div class="setting-control">
+                            <label class="toggle-switch">
+                                <input type="checkbox" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="setting-item">
+                        <div class="setting-label">
+                            <div class="setting-title">Digest Time</div>
+                            <div class="setting-desc">Time to send daily digest emails</div>
+                        </div>
+                        <div class="setting-control">
+                            <input type="time" class="input-field" value="09:00">
+                        </div>
+                    </div>
+                    <div class="setting-item">
+                        <div class="setting-label">
+                            <div class="setting-title">Weekly Reports</div>
+                            <div class="setting-desc">Send weekly platform analytics to admins</div>
+                        </div>
+                        <div class="setting-control">
+                            <label class="toggle-switch">
+                                <input type="checkbox" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Security -->
+            <div class="settings-section" id="security">
+                <h2 class="section-title">Security Settings</h2>
+                <p class="section-description">Configure security policies and authentication settings</p>
+
+                <div class="setting-group">
+                    <div class="setting-item">
+                        <div class="setting-label">
+                            <div class="setting-title">Two-Factor Authentication</div>
+                            <div class="setting-desc">Require 2FA for all user accounts</div>
+                        </div>
+                        <div class="setting-control">
+                            <label class="toggle-switch">
+                                <input type="checkbox">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="setting-item">
+                        <div class="setting-label">
+                            <div class="setting-title">Password Strength</div>
+                            <div class="setting-desc">Minimum password security requirements</div>
+                        </div>
+                        <div class="setting-control">
+                            <select class="select-field">
+                                <option value="weak">Basic (8+ characters)</option>
+                                <option value="medium" selected>Medium (8+ chars, mixed case)</option>
+                                <option value="strong">Strong (12+ chars, symbols)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="setting-item">
+                        <div class="setting-label">
+                            <div class="setting-title">Session Timeout</div>
+                            <div class="setting-desc">Auto-logout users after inactivity (minutes)</div>
+                        </div>
+                        <div class="setting-control">
+                            <input type="number" class="input-field" value="120" min="30" max="480">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="setting-group">
+                    <div class="setting-item">
+                        <div class="setting-label">
+                            <div class="setting-title">IP Whitelist</div>
+                            <div class="setting-desc">Restrict admin access to specific IP addresses</div>
+                        </div>
+                        <div class="setting-control">
+                            <label class="toggle-switch">
+                                <input type="checkbox">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="setting-item">
+                        <div class="setting-label">
+                            <div class="setting-title">Failed Login Attempts</div>
+                            <div class="setting-desc">Max failed attempts before account lockout</div>
+                        </div>
+                        <div class="setting-control">
+                            <input type="number" class="input-field" value="5" min="3" max="10">
+                        </div>
+                    </div>
+                    <div class="setting-item">
+                        <div class="setting-label">
+                            <div class="setting-title">Account Lockout Duration</div>
+                            <div class="setting-desc">Minutes to lock account after failed attempts</div>
+                        </div>
+                        <div class="setting-control">
+                            <input type="number" class="input-field" value="30" min="15" max="120">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Appearance -->
+            <div class="settings-section" id="appearance">
+                <h2 class="section-title">Appearance Settings</h2>
+                <p class="section-description">Customize the look and feel of your platform</p>
+
+                <div class="setting-group">
+                    <div class="setting-item">
+                        <div class="setting-label">
+                            <div class="setting-title">Primary Color</div>
+                            <div class="setting-desc">Main brand color for buttons and accents</div>
+                        </div>
+                        <div class="setting-control">
+                            <input type="color" class="color-picker" value="#4f46e5">
+                        </div>
+                    </div>
+                    <div class="setting-item">
+                        <div class="setting-label">
+                            <div class="setting-title">Secondary Color</div>
+                            <div class="setting-desc">Secondary color for highlights and links</div>
+                        </div>
+                        <div class="setting-control">
+                            <input type="color" class="color-picker" value="#7c3aed">
+                        </div>
+                    </div>
+                    <div class="setting-item">
+                        <div class="setting-label">
+                            <div class="setting-title">Dark Mode</div>
+                            <div class="setting-desc">Enable dark theme for the platform</div>
+                        </div>
+                        <div class="setting-control">
+                            <label class="toggle-switch">
+                                <input type="checkbox">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="setting-item">
+                        <div class="setting-label">
+                            <div class="setting-title">Logo Upload</div>
+                            <div class="setting-desc">Upload custom logo for your platform</div>
+                        </div>
+                        <div class="setting-control">
+                            <button class="btn btn-secondary">Choose File</button>
+                        </div>
+                    </div>
+                    <div class="setting-item">
+                        <div class="setting-label">
+                            <div class="setting-title">Font Style</div>
+                            <div class="setting-desc">Choose the primary font for your platform</div>
+                        </div>
+                        <div class="setting-control">
+                            <select class="select-field">
+                                <option value="segoe">Segoe UI (Default)</option>
+                                <option value="roboto">Roboto</option>
+                                <option value="inter">Inter</option>
+                                <option value="poppins">Poppins</option>
+                                <option value="lato">Lato</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="setting-group">
+                    <div class="setting-item">
+                        <div class="setting-label">
+                            <div class="setting-title">Custom CSS</div>
+                            <div class="setting-desc">Add custom CSS for advanced styling</div>
+                        </div>
+                        <div class="setting-control">
+                            <button class="btn btn-secondary">Edit CSS</button>
+                        </div>
+                    </div>
+                    <div class="setting-item">
+                        <div class="setting-label">
+                            <div class="setting-title">Animated Backgrounds</div>
+                            <div class="setting-desc">Enable animated gradient backgrounds</div>
+                        </div>
+                        <div class="setting-control">
+                            <label class="toggle-switch">
+                                <input type="checkbox" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Advanced Settings -->
+            <div class="settings-section" id="advanced">
+                <h2 class="section-title">Advanced Settings</h2>
+                <p class="section-description">Advanced configuration options for developers and system administrators</p>
+
+                <div class="setting-group">
+                    <div class="setting-item">
+                        <div class="setting-label">
+                            <div class="setting-title">API Access</div>
+                            <div class="setting-desc">Enable REST API for third-party integrations</div>
+                        </div>
+                        <div class="setting-control">
+                            <label class="toggle-switch">
+                                <input type="checkbox" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="setting-item">
+                        <div class="setting-label">
+                            <div class="setting-title">API Rate Limiting</div>
+                            <div class="setting-desc">Requests per minute per API key</div>
+                        </div>
+                        <div class="setting-control">
+                            <input type="number" class="input-field" value="100" min="10" max="1000">
+                        </div>
+                    </div>
+                    <div class="setting-item">
+                        <div class="setting-label">
+                            <div class="setting-title">Debug Mode</div>
+                            <div class="setting-desc">Enable detailed error logging and debugging</div>
+                        </div>
+                        <div class="setting-control">
+                            <label class="toggle-switch">
+                                <input type="checkbox">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="setting-group">
+                    <div class="setting-item">
+                        <div class="setting-label">
+                            <div class="setting-title">Database Optimization</div>
+                            <div class="setting-desc">Run database cleanup and optimization</div>
+                        </div>
+                        <div class="setting-control">
+                            <button class="btn btn-secondary">Optimize Now</button>
+                        </div>
+                    </div>
+                    <div class="setting-item">
+                        <div class="setting-label">
+                            <div class="setting-title">Cache Settings</div>
+                            <div class="setting-desc">Configure caching for better performance</div>
+                        </div>
+                        <div class="setting-control">
+                            <select class="select-field">
+                                <option value="none">Disabled</option>
+                                <option value="basic">Basic (1 hour)</option>
+                                <option value="aggressive" selected>Aggressive (24 hours)</option>
+                                <option value="custom">Custom Duration</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="setting-item">
+                        <div class="setting-label">
+                            <div class="setting-title">Clear Cache</div>
+                            <div class="setting-desc">Clear all cached data and force refresh</div>
+                        </div>
+                        <div class="setting-control">
+                            <button class="btn btn-secondary">Clear Cache</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="setting-group">
+                    <div class="setting-item">
+                        <div class="setting-label">
+                            <div class="setting-title">Backup Settings</div>
+                            <div class="setting-desc">Configure automatic backups</div>
+                        </div>
+                        <div class="setting-control">
+                            <button class="btn btn-secondary">Configure Backup</button>
+                        </div>
+                    </div>
+                    <div class="setting-item">
+                        <div class="setting-label">
+                            <div class="setting-title">System Maintenance</div>
+                            <div class="setting-desc">Enable maintenance mode for updates</div>
+                        </div>
+                        <div class="setting-control">
+                            <label class="toggle-switch">
+                                <input type="checkbox">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="setting-item">
+                        <div class="setting-label">
+                            <div class="setting-title">Export All Data</div>
+                            <div class="setting-desc">Download complete platform data backup</div>
+                        </div>
+                        <div class="setting-control">
+                            <button class="btn btn-secondary">Export Data</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="setting-group">
+                    <div class="setting-item">
+                        <div class="setting-label">
+                            <div class="setting-title">Reset Platform</div>
+                            <div class="setting-desc">⚠️ Reset all settings to default values</div>
+                        </div>
+                        <div class="setting-control">
+                            <button class="btn btn-danger">Reset Settings</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="save-bar" id="saveBar">
+        <div style="display: flex; gap: 15px; align-items: center;">
+            <span>You have unsaved changes</span>
+            <button class="btn btn-secondary" onclick="discardChanges()">Discard</button>
+            <button class="btn btn-primary" onclick="saveChanges()">Save Changes</button>
+        </div>
+    </div>
+
+    <script>
+        // Tab switching functionality
+        const tabs = document.querySelectorAll('.nav-tab');
+        const sections = document.querySelectorAll('.settings-section');
+        
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                // Remove active class from all tabs and sections
+                tabs.forEach(t => t.classList.remove('active'));
+                sections.forEach(s => s.classList.remove('active'));
+                
+                // Add active class to clicked tab
+                tab.classList.add('active');
+                
+                // Show corresponding section
+                const targetSection = document.getElementById(tab.getAttribute('data-tab'));
+                if (targetSection) {
+                    targetSection.classList.add('active');
+                }
+            });
+        });
+
+        // Track changes and show save bar
+        let hasChanges = false;
+        const saveBar = document.getElementById('saveBar');
+        
+        // Monitor all input changes
+        document.addEventListener('input', () => {
+            if (!hasChanges) {
+                hasChanges = true;
+                saveBar.classList.add('show');
+            }
+        });
+
+        // Monitor all toggle changes
+        document.addEventListener('change', () => {
+            if (!hasChanges) {
+                hasChanges = true;
+                saveBar.classList.add('show');
+            }
+        });
+
+        // Save changes function
+        function saveChanges() {
+            // Simulate save process
+            const saveBtn = document.querySelector('.btn-primary');
+            const originalText = saveBtn.textContent;
+            
+            saveBtn.textContent = 'Saving...';
+            saveBtn.disabled = true;
+            
+            setTimeout(() => {
+                saveBtn.textContent = 'Saved!';
+                setTimeout(() => {
+                    saveBtn.textContent = originalText;
+                    saveBtn.disabled = false;
+                    hasChanges = false;
+                    saveBar.classList.remove('show');
+                }, 1000);
+            }, 1500);
+        }
+
+        // Discard changes function
+        function discardChanges() {
+            if (confirm('Are you sure you want to discard all changes?')) {
+                hasChanges = false;
+                saveBar.classList.remove('show');
+                location.reload();
+            }
+        }
+
+        // Add smooth scrolling for better UX
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+
+        // Add click effects to buttons
+        document.querySelectorAll('.btn').forEach(button => {
+            button.addEventListener('click', function(e) {
+                let ripple = document.createElement('span');
+                ripple.classList.add('ripple');
+                this.appendChild(ripple);
+                
+                let x = e.clientX - e.target.offsetLeft;
+                let y = e.clientY - e.target.offsetTop;
+                
+                ripple.style.left = x + 'px';
+                ripple.style.top = y + 'px';
+                
+                setTimeout(() => {
+                    ripple.remove();
+                }, 600);
+            });
+        });
+
+        // Add some interactive feedback
+        document.querySelectorAll('.setting-group').forEach(group => {
+            group.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-2px)';
+                this.style.boxShadow = '0 8px 30px rgba(0, 0, 0, 0.1)';
+            });
+            
+            group.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0)';
+                this.style.boxShadow = '0 5px 20px rgba(0, 0, 0, 0.05)';
+            });
+        });
+
+        // Simulate real-time statistics updates
+        function updateStats() {
+            const statNumbers = document.querySelectorAll('.stat-number');
+            statNumbers.forEach(stat => {
+                if (stat.textContent.includes(',')) {
+                    let currentValue = parseInt(stat.textContent.replace(/,/g, ''));
+                    let increment = Math.floor(Math.random() * 3) + 1;
+                    stat.textContent = (currentValue + increment).toLocaleString();
+                } else if (stat.textContent.includes('%')) {
+                    let currentValue = parseFloat(stat.textContent.replace('%', ''));
+                    let change = (Math.random() - 0.5) * 0.2;
+                    stat.textContent = (currentValue + change).toFixed(1) + '%';
+                }
+            });
+        }
+
+        // Update stats every 10 seconds
+        setInterval(updateStats, 10000);
+    </script>
+</body>
+</html>
