@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SkillSwap - My Profile</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(45deg, #ff6b6b, #feca57, #48dbfb, #ff9ff3);
+            background-size: 400% 400%;
+            animation: gradientShift 10s ease infinite;
+            min-height: 100vh;
+            color: #333;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .navbar {
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .navbar-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+        }
+
+        .logo {
+            color: white;
+            font-size: 1.5rem;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: #feca57;
+        }
+
+        .main-container {
+            max-width: 1000px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        .profile-header {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .profile-form {
+            display: grid;
+            gap: 2rem;
+        }
+
+        .form-section {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .section-title {
+            color: #ff6b6b;
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.8rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #ff6b6b;
+        }
+
+        .skills-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+
+        .skill-input-group {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .skill-input-group input {
+            flex: 1;
+        }
+
+        .add-skill-btn {
+            background: #48dbfb;
+            color: white;
+            border: none;
+            padding: 0.8rem 1rem;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background 0.3s;
+        }
+
+        .add-skill-btn:hover {
+            background: #0abde3;
+        }
+
+        .skills-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .skill-tag {
+            background: #ff6b6b;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .skill-tag.wanted {
+            background: #feca57;
+            color: #333;
+        }
+
+        .remove-skill {
+            background: rgba(255,255,255,0.3);
+            border: none;
+            color: inherit;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+
+        .privacy-toggle {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 60px;
+            height: 30px;
+            background: #ddd;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .toggle-switch.active {
+            background: #48dbfb;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 24px;
+            height: 24px;
+            background: white;
+            border-radius: 50%;
+            transition: transform 0.3s;
+        }
+
+        .toggle-switch.active .toggle-slider {
+            transform: translateX(30px);
+        }
+
+        .save-btn {
+            background: linear-gradient(45deg, #ff6b6b, #feca57);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 25px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: transform 0.3s;
+            margin-top: 2rem;
+        }
+
+        .save-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .availability-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .availability-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .availability-item.selected {
+            border-color: #ff6b6b;
+            background: rgba(255,107,107,0.1);
+        }
+
+        .availability-item input[type="checkbox"] {
+            width: auto;
+            margin: 0;
+        }
+
+        @media (max-width: 768px) {
+            .skills-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .availability-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-content">
+            <a href="#" class="logo">🔄 SkillSwap</a>
+            <div class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="browse.html">Browse</a>
+                <a href="swaps.html">My Swaps</a>
+                <a href="#" onclick="logout()">Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="main-container">
+        <div class="profile-header">
+            <h1 id="profileName">Your Profile</h1>
+        </div>
+
+        <form class="profile-form" onsubmit="saveProfile(event)">
+            <div class="form-section">
+                <h2 class="section-title">📝 Basic Information</h2>
+                <div class="form-group">
+                    <label for="fullName">Full Name</label>
+                    <input type="text" id="fullName" name="fullName" required>
+                </div>
+                <div class="form-group">
+                    <label for="location">Location (Optional)</label>
+                    <input type="text" id="location" name="location" placeholder="City, Country">
+                </div>
+                <div class="form-group">
+                    <label for="bio">Bio</label>
+                    <textarea id="bio" name="bio" rows="4" placeholder="Tell others about yourself..."></textarea>
+                </div>
+            </div>
+
+            <div class="skills-container">
+                <div class="form-section">
+                    <h2 class="section-title">💪 Skills I Offer</h2>
+                    <div class="skill-input-group">
+                        <input type="text" id="offeredSkillInput" placeholder="Enter a skill you can teach">
+                        <button type="button" class="add-skill-btn" onclick="addSkill('offered')">Add</button>
+                    </div>
+                    <div class="skills-list" id="offeredSkills"></div>
+                </div>
+
+                <div class="form-section">
+                    <h2 class="section-title">🎯 Skills I Want</h2>
+                    <div class="skill-input-group">
+                        <input type="text" id="wantedSkillInput" placeholder="Enter a skill you want to learn">
+                        <button type="button" class="add-skill-btn" onclick="addSkill('wanted')">Add</button>
+                    </div>
+                    <div class="skills-list" id="wantedSkills"></div>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h2 class="section-title">⏰ Availability</h2>
+                <div class="availability-grid">
+                    <div class="availability-item" onclick="toggleAvailability(this)">
+                        <input type="checkbox" name="availability" value="weekday_morning">
+                        <label>Weekday Mornings</label>
+                    </div>
+                    <div class="availability-item" onclick="toggleAvailability(this)">
+                        <input type="checkbox" name="availability" value="weekday_afternoon">
+                        <label>Weekday Afternoons</label>
+                    </div>
+                    <div class="availability-item" onclick="toggleAvailability(this)">
+                        <input type="checkbox" name="availability" value="weekday_evening">
+                        <label>Weekday Evenings</label>
+                    </div>
+                    <div class="availability-item" onclick="toggleAvailability(this)">
+                        <input type="checkbox" name="availability" value="weekend_morning">
+                        <label>Weekend Mornings</label>
+                    </div>
+                    <div class="availability-item" onclick="toggleAvailability(this)">
+                        <input type="checkbox" name="availability" value="weekend_afternoon">
+                        <label>Weekend Afternoons</label>
+                    </div>
+                    <div class="availability-item" onclick="toggleAvailability(this)">
+                        <input type="checkbox" name="availability" value="weekend_evening">
+                        <label>Weekend Evenings</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h2 class="section-title">🔒 Privacy Settings</h2>
+                <div class="privacy-toggle">
+                    <span>Make Profile Public</span>
+                    <div class="toggle-switch" onclick="togglePrivacy(this)">
+                        <div class="toggle-slider"></div>
+                    </div>
+                </div>
+                <p style="margin-top: 1rem; color: #666; font-size: 0.9rem;">
+                    When public, other users can find and contact you. When private, only you can initiate contact.
+                </p>
+            </div>
+
+            <button type="submit" class="save-btn">💾 Save Profile</button>
+        </form>
+    </div>
+
+    <script>
+        let offeredSkills = [];
+        let wantedSkills = [];
+        let isPublic = true;
+
+        // Load profile data on page load
+        window.addEventListener('load', function() {
+            loadProfile();
+        });
+
+        function loadProfile() {
+            const savedProfile = JSON.parse(localStorage.getItem('userProfile') || '{}');
+            const userName = localStorage.getItem('userName') || 'User';
+            
+            document.getElementById('profileName').textContent = userName + "'s Profile";
+            
+            if (savedProfile.fullName) document.getElementById('fullName').value = savedProfile.fullName;
+            if (savedProfile.location) document.getElementById('location').value = savedProfile.location;
+            if (savedProfile.bio) document.getElementById('bio').value = savedProfile.bio;
+            
+            offeredSkills = savedProfile.offeredSkills || [];
+            wantedSkills = savedProfile.wantedSkills || [];
+            isPublic = savedProfile.isPublic !== undefined ? savedProfile.isPublic : true;
+            
+            updateSkillsDisplay();
+            updatePrivacyToggle();
+            
+            if (savedProfile.availability) {
+                savedProfile.availability.forEach(availability => {
+                    const checkbox = document.querySelector(`[value="${availability}"]`);
+                    if (checkbox) {
+                        checkbox.checked = true;
+                        checkbox.closest('.availability-item').classList.add('selected');
+                    }
+                });
+            }
+        }
+
+        function addSkill(type) {
+            const inputId = type === 'offered' ? 'offeredSkillInput' : 'wantedSkillInput';
+            const input = document.getElementById(inputId);
+            const skill = input.value.trim();
+            
+            if (skill && !getSkillArray(type).includes(skill)) {
+                getSkillArray(type).push(skill);
+                input.value = '';
+                updateSkillsDisplay();
+            }
+        }
+
+        function getSkillArray(type) {
+            return type === 'offered' ? offeredSkills : wantedSkills;
+        }
+
+        function removeSkill(type, skill) {
+            const skillArray = getSkillArray(type);
+            const index = skillArray.indexOf(skill);
+            if (index > -1) {
+                skillArray.splice(index, 1);
+                updateSkillsDisplay();
+            }
+        }
+
+        function updateSkillsDisplay() {
+            updateSkillsList('offeredSkills', offeredSkills, 'offered');
+            updateSkillsList('wantedSkills', wantedSkills, 'wanted');
+        }
+
+        function updateSkillsList(containerId, skills, type) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = '';
+            
+            skills.forEach(skill => {
+                const skillTag = document.createElement('div');
+                skillTag.className = `skill-tag ${type}`;
+                skillTag.innerHTML = `
+                    ${skill}
+                    <button class="remove-skill" onclick="removeSkill('${type}', '${skill}')">×</button>
+                `;
+                container.appendChild(skillTag);
+            });
+        }
+
+        function toggleAvailability(element) {
+            const checkbox = element.querySelector('input[type="checkbox"]');
+            checkbox.checked = !checkbox.checked;
+            element.classList.toggle('selected', checkbox.checked);
+        }
+
+        function togglePrivacy(element) {
+            isPublic = !isPublic;
+            element.classList.toggle('active', isPublic);
+            updatePrivacyToggle();
+        }
+
+        function updatePrivacyToggle() {
+            const toggle = document.querySelector('.toggle-switch');
+            toggle.classList.toggle('active', isPublic);
+        }
+
+        function saveProfile(event) {
+            event.preventDefault();
+            
+            const formData = new FormData(event.target);
+            const availability = Array.from(document.querySelectorAll('input[name="availability"]:checked')).map(cb => cb.value);
+            
+            const profile = {
+                fullName: formData.get('fullName'),
+                location: formData.get('location'),
+                bio: formData.get('bio'),
+                offeredSkills: offeredSkills,
+                wantedSkills: wantedSkills,
+                availability: availability,
+                isPublic: isPublic,
+                lastUpdated: new Date().toISOString()
+            };
+            
+            localStorage.setItem('userProfile', JSON.stringify(profile));
+            localStorage.setItem('userName', profile.fullName);
+            
+            // Update profile name display
+            document.getElementById('profileName').textContent = profile.fullName + "'s Profile";
+            
+            // Show success message
+            showSuccessMessage('Profile saved successfully!');
+        }
+
+        function showSuccessMessage(message) {
+            const successDiv = document.createElement('div');
+            successDiv.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: #48dbfb;
+                color: white;
+                padding: 1rem 2rem;
+                border-radius: 10px;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+                z-index: 1000;
+                animation: slideIn 0.3s ease;
+            `;
+            successDiv.textContent = message;
+            document.body.appendChild(successDiv);
+            
+            setTimeout(() => {
+                successDiv.remove();
+            }, 3000);
+        }
+
+        function logout() {
+            localStorage.removeItem('isLoggedIn');
+            localStorage.removeItem('userEmail');
+            localStorage.removeItem('userName');
+            window.location.href = 'index.html';
+        }
+
+        // Add enter key support for skill inputs
+        document.getElementById('offeredSkillInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                addSkill('offered');
+            }
+        });
+
+        document.getElementById('wantedSkillInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                addSkill('wanted');
+            }
+        });
+
+        // Add CSS animation for success message
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideIn {
+                from {
+                    transform: translateX(100%);
+                    opacity: 0;
+                }
+                to {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>
